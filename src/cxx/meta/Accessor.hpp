@@ -30,6 +30,15 @@ public:
 
     Accessor(const chaos::io::sys::Path& path);
 
+    //--------------------------------------------------------------------------
+    //                          PUBLIC MEMBER FUNCTIONS
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief Returns the file system path this Accessor is managing.
+     */
+    const chaos::io::sys::Path& get_path() const;
+
 private:
 
     //--------------------------------------------------------------------------
