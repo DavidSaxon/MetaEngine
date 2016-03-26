@@ -5,11 +5,12 @@ set(LIB_SRC
 	ext/jsoncpp/jsoncpp.cpp
 
 	src/cxx/meta/Accessor.cpp
-	src/cxx/meta/Proto.cpp
 )
 
 set(TESTS_SUITES
     tests/cxx/TestsMain.cpp
+
+    tests/cxx/Accessor_TestSuite.cpp
 )
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/linux_x86)
@@ -42,5 +43,7 @@ add_executable(tests ${TESTS_SUITES})
 
 target_link_libraries(tests
 	chaoscore_test
+	chaoscore_base
+	chaoscore_io
     metaengine
 )
