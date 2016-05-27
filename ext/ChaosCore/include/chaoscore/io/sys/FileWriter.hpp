@@ -16,18 +16,15 @@ namespace io
 namespace sys
 {
 
+
 /*!
- * \brief Object used to write to new or existing files on the file system.
- *
- * TODO: DOC, example use etc
- *
- * TODO: only supports UTF-8 and binary
+ * \brief Used for writing to a file on disk.
  */
 class FileWriter : public chaos::io::sys::FileHandle
 {
 private:
 
-    CHAOS_DISALLOW_COPY_AND_ASSIGN( FileWriter );
+    CHAOS_DISALLOW_COPY_AND_ASSIGN(FileWriter);
 
 public:
 
@@ -36,21 +33,16 @@ public:
     //--------------------------------------------------------------------------
 
     /*!
-     * \brief Flags that can be used to describe how the file handle should be
-     *        opened.
-     *
-     * These flags can be combined together using the logical or operator.
+     * \brief The possible modes the FileWriter can be opened in.
      */
-    enum Flag
+    enum OpenMode
     {
-        /// No flags specified
-        FLAG_NONE   = 0,
-        /// Operations are performed in binary mode rather than text mode.
-        FLAG_BINARY = 1,
-        /// If the file already exists new data will be written to the end of
-        /// of the file. If this flag is not specified writing to existing file
-        /// will cause the original contents to be discarded.
-        FLAG_APPEND = 2
+        /// Any existing data in the file will be removed and the FileWriter
+        /// will begin from the start of the file.
+        OPEN_TRUNCATE = 0,
+        /// Existing data will be retained in the file and the FileWriter will
+        /// begin from the end of the existing data.
+        OPEN_APPEND
     };
 
     //--------------------------------------------------------------------------
@@ -60,40 +52,49 @@ public:
     /*!
      * \brief Default constructor.
      *
-     * Creates a new unopened FileWriter with no initial path set.
+     * Creates a new unopened FileWriter with no file path yet defined.
      *
-     * \param flags Flags used to described how the FileWriter should be opened.
-     *              See chaos::io::sys::FileWriter::Flag for more details.
+     * \param open_mode Defines the mode which the file should be opened with.
+     * \param encoding Defines the encoding that data will be written to the
+     *                 file in. If chaos::io::sys::FileHandle::ENCODING_DETECT
+     *                 the writer will use
+     *                 chaos::io::sys::FileHandle::ENCODING_RAW.
+     * \param newline The newline symbol that will be used to write lines to the
+     *                file.
      */
-    FileWriter( chaos::uint32 flags = FileWriter::FLAG_NONE );
+    FileWriter(
+            OpenMode open_mode = OPEN_TRUNCATE,
+            Encoding encoding = ENCODING_RAW,
+            Newline newline   = NEWLINE_UNIX);
 
     /*!
-     * \brief Open constructor.
+     * \brief Path constructor.
      *
-     * Creates a new FileWriter and attempts to open it to the given path.
+     * Creates a new FileWriter opened to the given path/
      *
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened
+     * \param The path to the file to write to.
+     * \param open_mode Defines the mode which the file should be opened with.
+     * \param encoding Defines the encoding that data will be written to the
+     *                 file in. If chaos::io::sys::FileHandle::ENCODING_DETECT
+     *                 the writer will use
+     *                 chaos::io::sys::FileHandle::ENCODING_RAW.
+     * \param newline The newline symbol that will be used to write lines to the
+     *                file.
      *
-     * \param path Path to open this FileWriter to.
-     * \param flags Flags used to described how the FileWriter should be opened.
-     *              See chaos::io::sys::FileWriter::Flag for more details.
+     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened.
      */
     FileWriter(
             const chaos::io::sys::Path& path,
-            chaos::uint32 flags = FileWriter::FLAG_NONE );
-
-    //--------------------------------------------------------------------------
-    //                                 OPERATORS
-    //--------------------------------------------------------------------------
+            OpenMode open_mode = OPEN_TRUNCATE,
+            Encoding encoding = ENCODING_RAW,
+            Newline newline   = NEWLINE_UNIX);
 
     /*!
-     * \brief chaos::uni::UTF8String stream operator.
+     * \brief Move constructor.
      *
-     * Writes the given chaos::uni::UTF8String to the file writer's buffer.
-     *
-     * \throws chaos::ex::StateError If this file handle is not open.
+     * \param other The FileWriter to move resources from.
      */
-    FileWriter& operator<<( const chaos::uni::UTF8String& text );
+    FileWriter(FileWriter&& other);
 
     //--------------------------------------------------------------------------
     //                                 DESTRUCTOR
@@ -106,64 +107,111 @@ public:
     //--------------------------------------------------------------------------
 
     /*!
-     * \brief Opens the writer to the internal path.
+     * \brief Opens this FileWriter to the internal path.
      *
-     * \throws chaos::ex::StateError If this file handle is already open.
+     * \note If a encoding other than chaos::io::sys::FileHandle::ENCODING_RAW
+     *       is being used and the open mode is
+     *       chaos::io::sys::FileWriter::OPEN_TRUNCATE, opening will cause the
+     *       relevant Unicode BOM to be written to the start of the file.
      *
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened
+     * \throws chaos::ex::StateError If this FileWriter is already open.
+     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened.
      */
-    void open();
+    virtual void open();
+
+    // override to avoid C++ function hiding
+    virtual void open(const chaos::io::sys::Path& path);
 
     /*!
-     * \brief Sets the path and opens this writer to it.
-     *
-     * This function is short hand for:
-     *
-     * \code
-     * my_file_writer.set_path( m_path );
-     * my_file_writer.open();
-     * \endcode
-     *
-     * \throws chaos::ex::StateError If this file handle is already open.
-     *
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened
+     * \brief Closes this FileWriter.
      */
-    void open( const chaos::io::sys::Path& path );
+    virtual void close();
 
     /*!
-     * \brief Closes this file writer and writes data to the file system.
+     * \brief Returns the size of the file being written in bytes.
      *
-     * Once the file is closed write operations cannot be performed until the
-     * file writer is reopened.
-     *
-     * This function does not need to be explicitly closed. When this object is
-     * destroyed it will be ensured that data is written and the handle is
-     * closed.
-     *
-     * \throws chaos::ex::StateError If this file handle is not open.
+     * \throws chaos::ex::StateError If the FileWriter is not open.
      */
-    void close();
+    virtual chaos::int64 get_size() const;
 
     /*!
-     * \brief Writes an chaos::uni::UTF8String to the internal buffer of this
-     *        file writer.
+     * \brief Returns the index of the byte the file position indicator is
+     *        currently at.
      *
-     * The internal buffer is only written to the file system when this file
-     * writer is closed.
-     *
-     * \throws chaos::ex::StateError If this file handle is not open.
+     * \throws chaos::ex::StateError If the FileWriter is not open.
      */
-    void write( const chaos::uni::UTF8String& text );
+    virtual chaos::int64 tell() const;
 
     /*!
-     * \brief Convenience function to write text with a following new line
-     *        character.
+     * \brief Sets the file position indicator to the given byte index.
      *
-     * See write().
-     *
-     * \throws chaos::ex::StateError If this file handle is not open.
+     * \throws chaos::ex::StateError If the FileWriter is not open.
+     * \throws chaos::ex::IndexOutOfBoundsError If the given byte index is
+     *                                          greater than the number of bytes
+     *                                          in the file or is less than 0.
      */
-    void write_line( const chaos::uni::UTF8String& text );
+    virtual void seek(chaos::int64 index);
+
+    /*!
+     * \brief Writes the given data array to the file.
+     *
+     * This function writes the raw bytes of the input data to the file,
+     * therefore it assumes the input data isin  the correct encoding. Any
+     * newline characters in the data are not converted to this FileWriter's
+     * newline type and are left as is.
+     *
+     * \param data The byte array to write to the file.
+     * \param length The number of bytes in the provided data.
+     *
+     * \throws chaos::ex::StateError If this FileWriter is not open.
+     */
+    void write(const char* data, std::size_t length);
+
+    /*!
+     * \brief Writes the given chaos::str::UTF8String to the file.
+     *
+     * The contents of the data will be converted to this FileWriter's
+     * respective encoding. Any newline symbols within the data are not
+     * converted to this FileWriter's newline type and are left as is.
+     *
+     * \param data The string to write to the file.
+     *
+     * \throws chaos::ex::StateError If this FileWriter is not open.
+     */
+    void write(const chaos::str::UTF8String& data);
+
+    /*!
+     * \brief Writes the given data to the file followed by a newline symbol.
+     *
+     * This function writes the raw bytes of the input data to the file,
+     * therefore it assumes the input data is in the correct encoding. However
+     * the newline character appended to the data will match the newline type
+     * being used by this FileWriter and be in the appropriate encoding.
+     * Any newline symbols within the input data will not be converted to match
+     * the FileWriter's newline type.
+     *
+     * \param data The byte array to write to the file.
+     * \param length The number of bytes in the provided data.
+     *
+     * \throws chaos::ex::StateError If this FileWriter is not open.
+     */
+    void write_line(const char* data, std::size_t length);
+
+    /*!
+     * \brief Writes the given chaos::str::UTF8String to the file followed by a
+     *        newline symbol.
+     *
+     * The contents of the data will be converted to this FileWriter's
+     * respective encoding. A newline character that matches the writer's
+     * encoding and newline type will be appended to the file after the data has
+     * been written. Any newline symbols within the data will not be converted
+     * to match the FileWriter's newline type.
+     *
+     * \param data The string to write to the file.
+     *
+     * \throws chaos::ex::StateError If this FileWriter is not open.
+     */
+    void write_line(const chaos::str::UTF8String& data);
 
 private:
 
@@ -172,7 +220,12 @@ private:
     //--------------------------------------------------------------------------
 
     /*!
-     * \brief The output stream being used to write to disk.
+     * \brief The mode the FileWriter should be opened with.
+     */
+    OpenMode m_open_mode;
+
+    /*!
+     * \brief The output stream used to write to the file.
      */
     std::ofstream* m_stream;
 };

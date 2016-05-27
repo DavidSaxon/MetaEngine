@@ -5,7 +5,7 @@
 #ifndef CHAOSCORE_GFX_VECTOR4_HPP_
 #define CHAOSCORE_GFX_VECTOR4_HPP_
 
-#include "chaoscore/base/uni/UTF8String.hpp"
+#include "chaoscore/base/str/UTF8String.hpp"
 
 namespace chaos
 {
@@ -275,8 +275,8 @@ public:
 //                               EXTERNAL OPERATORS
 //------------------------------------------------------------------------------
 
-chaos::uni::UTF8String& operator<<(
-        chaos::uni::UTF8String& s,
+chaos::str::UTF8String& operator<<(
+        chaos::str::UTF8String& s,
         const Vector4& v );
 
 std::ostream& operator<<( std::ostream& stream, const Vector4& v );

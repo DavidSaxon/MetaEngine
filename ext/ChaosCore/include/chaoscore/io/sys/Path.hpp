@@ -7,7 +7,7 @@
 
 #include <ostream>
 
-#include "chaoscore/base/uni/UTF8String.hpp"
+#include "chaoscore/base/str/UTF8String.hpp"
 
 namespace chaos
 {
@@ -58,7 +58,7 @@ public:
      * Would be passed to this constructor like so:
      *
      * \code
-     * std::vector< chaos::uni::UTF8String > components;
+     * std::vector< chaos::str::UTF8String > components;
      * components.push_back( "path" );
      * components.push_back( "to" );
      * components.push_back( "file.txt" );
@@ -66,7 +66,7 @@ public:
      * chaos::io::file::Path p( components );
      * \endcode
      */
-    Path( const std::vector< chaos::uni::UTF8String >& components );
+    Path( const std::vector< chaos::str::UTF8String >& components );
 
     /*!
      * \brief Iterator constructor
@@ -77,7 +77,7 @@ public:
      * Example usage:
      *
      * \code
-     * std::vector< chaos::uni::UTF8String > components;
+     * std::vector< chaos::str::UTF8String > components;
      * components.push_back( "path" );
      * components.push_back( "to" );
      * components.push_back( "file.txt" );
@@ -86,8 +86,8 @@ public:
      * \endcode
      */
     Path(
-            const std::vector< chaos::uni::UTF8String >::const_iterator& begin,
-            const std::vector< chaos::uni::UTF8String >::const_iterator& end );
+            const std::vector< chaos::str::UTF8String >::const_iterator& begin,
+            const std::vector< chaos::str::UTF8String >::const_iterator& end );
 
 
     /*!
@@ -101,7 +101,7 @@ public:
      * On Unix systems this will split the given string into components using
      * the "/" symbol. Likewise on Windows systems the "\" symbol will be used.
      */
-    Path( const chaos::uni::UTF8String& string_path );
+    Path( const chaos::str::UTF8String& string_path );
 
     /*!
      * \brief Copy constructor.
@@ -178,7 +178,7 @@ public:
      *                                          bounds of the number of
      *                                          components in this Path.
      */
-    chaos::uni::UTF8String& operator[]( std::size_t index );
+    chaos::str::UTF8String& operator[]( std::size_t index );
 
     /*!
      * \brief Returns a const reference to the component of this Path at the
@@ -188,7 +188,7 @@ public:
      *                                          bounds of the number of
      *                                          components in this Path.
      */
-    const chaos::uni::UTF8String& operator[]( std::size_t index ) const;
+    const chaos::str::UTF8String& operator[]( std::size_t index ) const;
 
     /*!
      * \brief Addition operator.
@@ -251,7 +251,7 @@ public:
      *                  component.
      * \return Reference to this Path after the join has taken place.
      */
-    Path& operator<<( const chaos::uni::UTF8String& component );
+    Path& operator<<( const chaos::str::UTF8String& component );
 
     //--------------------------------------------------------------------------
     //                          PUBLIC MEMBER FUNCTIONS
@@ -271,11 +271,11 @@ public:
      * // p now contains [ "path", "to", "file" ]
      * \endcode
      *
-     * \param component chaos::uni::UTF8String to be appended to the end of this
+     * \param component chaos::str::UTF8String to be appended to the end of this
      *                  Path as a component.
      * \return Reference to this Path after the join has taken place.
      */
-    Path& join( const chaos::uni::UTF8String& component );
+    Path& join( const chaos::str::UTF8String& component );
 
     /*!
      * \brief Inserts the component at the given index in this Path.
@@ -305,10 +305,10 @@ public:
      *                                          currently in this Path.
      *
      * \param index Position to insert the new component at.
-     * \param component chaos::uni::UTF8String representing the new component to
+     * \param component chaos::str::UTF8String representing the new component to
      *                  be inserted.
      */
-    void insert( std::size_t index, const chaos::uni::UTF8String& component );
+    void insert( std::size_t index, const chaos::str::UTF8String& component );
 
     /*!
      * \brief Reverts this Path to be an empty path.
@@ -329,7 +329,7 @@ public:
     void remove( std::size_t index );
 
     /*!
-     * \brief Returns a chaos::uni::UTF8String representation of this Path for
+     * \brief Returns a chaos::str::UTF8String representation of this Path for
      *        the current operating system.
      *
      * Example usage:
@@ -337,7 +337,7 @@ public:
      * \code
      * chaos::io::file::Path p;
      * p << "path" << "to" << "file.txt";
-     * chaos::uni::UTF8String s = p.to_native();
+     * chaos::str::UTF8String s = p.to_native();
      * // on Unix systems s will be "path/to/file.txt"
      * // on Windows systems s will be "path\to\file.txt"
      * \endcode
@@ -351,10 +351,10 @@ public:
      *          automatically handle platform specific encodings on your behalf.
      *
      */
-    chaos::uni::UTF8String to_native() const;
+    chaos::str::UTF8String to_native() const;
 
     /*!
-     * \brief Returns the chaos::uni::UTF8String representation of this Path for
+     * \brief Returns the chaos::str::UTF8String representation of this Path for
      *        Unix based operating systems.
      *
      * Example usage:
@@ -362,16 +362,16 @@ public:
      * \code
      * chaos::io::file::Path p;
      * p << "path" << "to" << "file.txt";
-     * chaos::uni::UTF8String s = p.to_unix();
+     * chaos::str::UTF8String s = p.to_unix();
      * // s is "path/to/file.txt"
      * \endcode
      *
      * \warning The returned path is UTF-8 encoded. See to_native() for details.
      */
-    chaos::uni::UTF8String to_unix() const;
+    chaos::str::UTF8String to_unix() const;
 
     /*!
-     * \brief Returns the chaos::uni::UTF8String representation of this Path for
+     * \brief Returns the chaos::str::UTF8String representation of this Path for
      *        Windows based operating systems.
      *
      * Example usage:
@@ -379,13 +379,13 @@ public:
      * \code
      * chaos::io::file::Path p;
      * p << "path" << "to" << "file.txt";
-     * chaos::uni::UTF8String s = p.to_windows();
+     * chaos::str::UTF8String s = p.to_windows();
      * // s is "path\to\file.txt"
      * \endcode
      *
      * \warning The returned path is UTF-8 encoded. See to_native() for details.
      */
-    chaos::uni::UTF8String to_windows() const;
+    chaos::str::UTF8String to_windows() const;
 
 
     //--------------------------------ACCESSORS---------------------------------
@@ -433,21 +433,21 @@ public:
      * [ "path", "to", "file.txt" ]
      * \endcode
      */
-    const std::vector< chaos::uni::UTF8String >& get_components() const;
+    const std::vector< chaos::str::UTF8String >& get_components() const;
 
         /*!
      * \brief Returns the first component of this path.
      *
      * \throws chaos::ex::IndexOutOfBoundsError If this path is empty.
      */
-    const chaos::uni::UTF8String& get_front() const;
+    const chaos::str::UTF8String& get_front() const;
 
     /*!
      * \brief Returns the last component of this path.
      *
      * \throws chaos::ex::IndexOutOfBoundsError If this path is empty.
      */
-    const chaos::uni::UTF8String& get_back() const;
+    const chaos::str::UTF8String& get_back() const;
 
     /*!
      * \brief Returns the file extension of the leaf component of this Path.
@@ -457,12 +457,12 @@ public:
      * \code
      * chaos::io::file::Path p;
      * p << "path" << "to" << "file.txt";
-     * chaos::uni::UTF8String ext = p.get_extension();
+     * chaos::str::UTF8String ext = p.get_extension();
      * // ext is "txt"
      * \endcode
      *
      */
-    chaos::uni::UTF8String get_extension() const;
+    chaos::str::UTF8String get_extension() const;
 
  private:
 
@@ -473,7 +473,7 @@ public:
     /*!
      * \brief List containing each individual component of this path.
      */
-    std::vector< chaos::uni::UTF8String > m_components;
+    std::vector< chaos::str::UTF8String > m_components;
 
     /*!
      * \brief Allocation for the last returned c string path.
@@ -485,7 +485,7 @@ public:
 //                               EXTERNAL OPERATORS
 //------------------------------------------------------------------------------
 
-chaos::uni::UTF8String& operator<<( chaos::uni::UTF8String& s, const Path& p );
+chaos::str::UTF8String& operator<<( chaos::str::UTF8String& s, const Path& p );
 
 std::ostream& operator<<( std::ostream& stream, const Path& p );
 

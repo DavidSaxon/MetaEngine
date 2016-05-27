@@ -18,15 +18,18 @@ namespace ex
 {
 
 /*!
- * \brief Warns of an unexpected error during testing procedures.
+ * \brief Abstract base exception that warns of an unexpected error during
+ *        testing procedures.
  */
 class TestError : public chaos::ex::ChaosException
 {
-public:
+protected:
 
-    TestError( const chaos::uni::UTF8String& message )
+    TestError(
+        const chaos::str::UTF8String& type,
+        const chaos::str::UTF8String& message)
         :
-        ChaosException( message )
+        ChaosException(type, message)
     {
     }
 };
@@ -38,9 +41,9 @@ class TestDeclerationError : public TestError
 {
 public:
 
-    TestDeclerationError( const chaos::uni::UTF8String& message )
+    TestDeclerationError(const chaos::str::UTF8String& message)
         :
-        TestError( message )
+        TestError("TestDeclerationError", message)
     {
     }
 };
@@ -52,9 +55,9 @@ class TestRuntimeError : public TestError
 {
 public:
 
-    TestRuntimeError( const chaos::uni::UTF8String& message )
+    TestRuntimeError(const chaos::str::UTF8String& message)
         :
-        TestError( message )
+        TestError("TestRuntimeError", message)
     {
     }
 };
@@ -66,9 +69,9 @@ class InvalidPathError : public TestError
 {
 public:
 
-    InvalidPathError( const chaos::uni::UTF8String& message )
+    InvalidPathError(const chaos::str::UTF8String& message)
         :
-        TestError( message )
+        TestError("InvalidPathError", message)
     {
     }
 };

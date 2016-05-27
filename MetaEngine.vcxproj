@@ -20,11 +20,11 @@
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Lib'">
     <ClCompile Include="ext\jsoncpp\jsoncpp.cpp" />
-    <ClCompile Include="src\cxx\meta\Accessor.cpp" />
+    <ClCompile Include="src\cxx\meta\Data.cpp" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='tests'">
     <ClCompile Include="tests\cxx\TestsMain.cpp" />
-    <ClCompile Include="tests\cxx\Accessor_TestSuite.cpp" />
+    <ClCompile Include="tests\cxx\Data_TestSuite.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{732BAAC0-305B-48C7-AA9E-222E45EC02F4}</ProjectGuid>

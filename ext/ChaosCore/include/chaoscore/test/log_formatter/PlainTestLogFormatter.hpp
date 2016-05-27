@@ -48,25 +48,25 @@ public:
             chaos::uint64 checks_failed );
 
     virtual void open_test(
-            const chaos::uni::UTF8String& path,
-            const chaos::uni::UTF8String& id );
+            const chaos::str::UTF8String& path,
+            const chaos::str::UTF8String& id );
 
     virtual void close_test();
 
-    virtual void report_crash( const chaos::uni::UTF8String& info );
+    virtual void report_crash( const chaos::str::UTF8String& info );
 
     virtual void report_check_pass(
-            const chaos::uni::UTF8String& type,
-            const chaos::uni::UTF8String& file,
+            const chaos::str::UTF8String& type,
+            const chaos::str::UTF8String& file,
                   chaos::int32            line );
 
     virtual void report_check_fail(
-            const chaos::uni::UTF8String& type,
-            const chaos::uni::UTF8String& file,
+            const chaos::str::UTF8String& type,
+            const chaos::str::UTF8String& file,
                   chaos::int32            line,
-            const chaos::uni::UTF8String& message );
+            const chaos::str::UTF8String& message );
 
-    virtual void write_message( const chaos::uni::UTF8String& message );
+    virtual void write_message( const chaos::str::UTF8String& message );
 
     virtual void finialise_test_report(
             chaos::uint64 checks_passed,

@@ -4,13 +4,13 @@ project(ChaosCore)
 set(LIB_SRC
 	ext/jsoncpp/jsoncpp.cpp
 
-	src/cxx/meta/Accessor.cpp
+	src/cxx/meta/Data.cpp
 )
 
 set(TESTS_SUITES
     tests/cxx/TestsMain.cpp
 
-    tests/cxx/Accessor_TestSuite.cpp
+    tests/cxx/Data_TestSuite.cpp
 )
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/linux_x86)

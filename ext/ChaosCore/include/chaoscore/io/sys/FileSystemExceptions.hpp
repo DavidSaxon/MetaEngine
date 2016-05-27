@@ -16,17 +16,19 @@ namespace sys
 {
 
 /*!
- * \brief A generic error relating to the file system.
+ * \brief Abstract base error relating to the file system.
  *
  * All other file system exceptions inherit from this exception.
  */
 class FileSystemError : public chaos::ex::ChaosException
 {
-public:
+protected:
 
-    FileSystemError( const chaos::uni::UTF8String& message )
+    FileSystemError(
+        const chaos::str::UTF8String& type,
+        const chaos::str::UTF8String& message)
         :
-        ChaosException( message )
+        ChaosException(type, message)
     {
     }
 };
@@ -39,9 +41,9 @@ class InvalidPathError : public chaos::ex::ChaosException
 {
 public:
 
-    InvalidPathError( const chaos::uni::UTF8String& message )
+    InvalidPathError(const chaos::str::UTF8String& message)
         :
-        ChaosException( message )
+        ChaosException("InvalidPathError", message)
     {
     }
 };
@@ -53,9 +55,9 @@ class CreateDirectoryError : public FileSystemError
 {
 public:
 
-    CreateDirectoryError( const chaos::uni::UTF8String& message )
+    CreateDirectoryError(const chaos::str::UTF8String& message)
         :
-        FileSystemError( message )
+        FileSystemError("CreateDirectoryError", message)
     {
     }
 };
@@ -71,9 +73,23 @@ class AmbiguousPathError : public FileSystemError
 {
 public:
 
-    AmbiguousPathError( const chaos::uni::UTF8String& message )
+    AmbiguousPathError(const chaos::str::UTF8String& message)
         :
-        FileSystemError( message )
+        FileSystemError("AmbiguousPathError", message)
+    {
+    }
+};
+
+/*!
+ * \brief Warns that the end of file marker has been reached.
+ */
+class EOFError : public FileSystemError
+{
+public:
+
+    EOFError(const chaos::str::UTF8String& message)
+        :
+        FileSystemError("EOFError", message)
     {
     }
 };

@@ -14,7 +14,7 @@
 
 #include "chaoscore/base/Preproc.hpp"
 #include "chaoscore/base/math/MathOperations.hpp"
-#include "chaoscore/base/uni/UTF8String.hpp"
+#include "chaoscore/base/str/UTF8String.hpp"
 #include "chaoscore/test/TestExceptions.hpp"
 #include "chaoscore/test/TestLogger.hpp"
 
@@ -34,6 +34,14 @@ namespace test
  * \brief The main function that should be called to run tests.
  */
 int deferred_main(int argc, char* argv[]);
+
+/*!
+ * \brief Registers a globals fixture functions.
+ *
+ * \param setup Function that will be called once when the test engine begins.
+ * \param teardown Function that will be called once the test engine ends.
+ */
+void register_global_fixture(void (*setup)(), void (*teardown)());
 
 //------------------------------------------------------------------------------
 //                                    CLASSES
@@ -99,7 +107,7 @@ class UnitTest
 {
 public:
 
-    UnitTest( const chaos::uni::UTF8String& name ) : m_name( name )
+    UnitTest( const chaos::str::UTF8String& name ) : m_name( name )
     {
     }
 
@@ -107,7 +115,7 @@ public:
     {
     }
 
-    const chaos::uni::UTF8String& get_name()
+    const chaos::str::UTF8String& get_name()
     {
         return m_name;
     }
@@ -118,7 +126,7 @@ public:
 
 private:
 
-    chaos::uni::UTF8String m_name;
+    chaos::str::UTF8String m_name;
 };
 
 /*!
@@ -144,20 +152,20 @@ struct OutInfo
 struct RunInfo
 {
     // the current testing id
-    chaos::uni::UTF8String id;
+    chaos::str::UTF8String id;
     // whether the tests should be run in a single process or not
     bool single_proc;
     // whether the test is being run as a sub-process of a parent testing
     // process
     bool sub_proc;
     // the paths to the tests to run
-    std::set< chaos::uni::UTF8String > paths;
+    std::set< chaos::str::UTF8String > paths;
     // whether the standard output stream is being used
     bool use_stdout;
     // information for stdout
     OutInfo stdout_info;
     // mapping from file path to write to, to the format to use
-    std::map< chaos::uni::UTF8String, OutInfo* > files;
+    std::map< chaos::str::UTF8String, OutInfo* > files;
 
     RunInfo()
         :
@@ -189,9 +197,9 @@ public:
      * are dependent on which parameters are provided.
      */
     TestCore(
-            const chaos::uni::UTF8String& path,
+            const chaos::str::UTF8String& path,
                   UnitTest*               unit_test,
-            const chaos::uni::UTF8String& file,
+            const chaos::str::UTF8String& file,
                   chaos::int32            line,
                   bool                    module  = false,
                   RunInfo*                run_info = NULL )
@@ -238,27 +246,27 @@ public:
         return l;
     }
 
-    static std::map< chaos::uni::UTF8String, UnitTest* >& test_map()
+    static std::map< chaos::str::UTF8String, UnitTest* >& test_map()
     {
-        static std::map< chaos::uni::UTF8String, UnitTest* > t_m;
+        static std::map< chaos::str::UTF8String, UnitTest* > t_m;
         return t_m;
     }
 
-    static std::set< chaos::uni::UTF8String >& base_modules()
+    static std::set< chaos::str::UTF8String >& base_modules()
     {
-        static std::set< chaos::uni::UTF8String > b_m;
+        static std::set< chaos::str::UTF8String > b_m;
         return b_m;
     }
 
-    static std::set< chaos::uni::UTF8String >& known_modules()
+    static std::set< chaos::str::UTF8String >& known_modules()
     {
-        static std::set< chaos::uni::UTF8String > k_m;
+        static std::set< chaos::str::UTF8String > k_m;
         return k_m;
     }
 
-    static chaos::uni::UTF8String& current_module()
+    static chaos::str::UTF8String& current_module()
     {
-        static chaos::uni::UTF8String c_m;
+        static chaos::str::UTF8String c_m;
         return c_m;
     }
 
@@ -270,17 +278,17 @@ private:
      * \brief Declares a test module.
      */
     static void declare_module(
-            const chaos::uni::UTF8String& path,
-            const chaos::uni::UTF8String& file,
+            const chaos::str::UTF8String& path,
+            const chaos::str::UTF8String& file,
                   chaos::int32            line );
 
     /*!
      * \brief Declares a unit test.
      */
     static void declare_unit(
-            const chaos::uni::UTF8String& path,
+            const chaos::str::UTF8String& path,
                   UnitTest*               unit_test,
-            const chaos::uni::UTF8String& file,
+            const chaos::str::UTF8String& file,
                   chaos::int32            line );
 
     /*!
@@ -303,7 +311,7 @@ private:
      */
     static void run_test(
             UnitTest*                     unit_test,
-            const chaos::uni::UTF8String& full_path,
+            const chaos::str::UTF8String& full_path,
             RunInfo*                      run_info );
 
     /*!
@@ -311,7 +319,7 @@ private:
      */
     static void run_current_proc(
             UnitTest*                     unit_test,
-            const chaos::uni::UTF8String& full_path,
+            const chaos::str::UTF8String& full_path,
             RunInfo*                      run_info );
 
     /*!
@@ -326,28 +334,28 @@ private:
      */
     static void run_new_proc(
             UnitTest*                     unit_test,
-            const chaos::uni::UTF8String& full_path,
+            const chaos::str::UTF8String& full_path,
             RunInfo*                      run_info );
 
     /*!
      * \brief Generates a new unique id for the given unit test name.
      */
-    static chaos::uni::UTF8String generate_id(
-            const chaos::uni::UTF8String& name );
+    static chaos::str::UTF8String generate_id(
+            const chaos::str::UTF8String& name );
 
     /*!
      * \brief Converts a test logger output format to a UTF8String for the
      * command line.
      */
-    static chaos::uni::UTF8String log_format_to_string(
+    static chaos::str::UTF8String log_format_to_string(
             TestLogger::OutFormat format );
 
     /*!
      * \brief Formats and throws a TestDeclerationError.
      */
     static void throw_error(
-            const chaos::uni::UTF8String& message,
-            const chaos::uni::UTF8String& file,
+            const chaos::str::UTF8String& message,
+            const chaos::str::UTF8String& file,
                   chaos::int32            line );
 };
 
@@ -469,8 +477,8 @@ private:
  * Messages are displayed in test logs with a verbosity of 3+.
  *
  * \param message The message to write to the logs. This should be a
- *                chaos::uni::UTF8String or implicitly constructible as a
- *                chaos::uni::UTF8String.
+ *                chaos::str::UTF8String or implicitly constructible as a
+ *                chaos::str::UTF8String.
  */
 #define CHAOS_TEST_MESSAGE( message )                                          \
     chaos::test::internal::TestCore::logger().write_message( message )
@@ -526,7 +534,7 @@ private:
     }                                                                          \
     else                                                                       \
     {                                                                          \
-        chaos::uni::UTF8String f_e_m;                                          \
+        chaos::str::UTF8String f_e_m;                                          \
         f_e_m << _a << " does not equal " << _b;                               \
         chaos::test::internal::TestCore::logger().report_check_fail(           \
                 "CHAOS_CHECK_EQUAL", __FILE__, __LINE__, f_e_m );              \
@@ -549,7 +557,7 @@ private:
     }                                                                          \
     else                                                                       \
     {                                                                          \
-        chaos::uni::UTF8String f_e_m;                                          \
+        chaos::str::UTF8String f_e_m;                                          \
         f_e_m << _a << " equals " << _b;                                       \
         chaos::test::internal::TestCore::logger().report_check_fail(           \
                 "CHAOS_CHECK_NOT_EQUAL", __FILE__, __LINE__, f_e_m );          \
@@ -573,7 +581,7 @@ private:
     }                                                                          \
     else                                                                       \
     {                                                                          \
-        chaos::uni::UTF8String f_e_m;                                          \
+        chaos::str::UTF8String f_e_m;                                          \
         f_e_m << _a << " does not equal " << _b;                               \
         chaos::test::internal::TestCore::logger().report_check_fail(           \
                 "CHAOS_CHECK_FLOAT_EQUAL", __FILE__, __LINE__, f_e_m );        \
@@ -597,7 +605,7 @@ private:
     }                                                                          \
     else                                                                       \
     {                                                                          \
-        chaos::uni::UTF8String f_e_m;                                          \
+        chaos::str::UTF8String f_e_m;                                          \
         f_e_m << _a << " does not equal " << _b;                               \
         chaos::test::internal::TestCore::logger().report_check_fail(           \
                 "CHAOS_CHECK_FLOAT_EQUAL", __FILE__, __LINE__, f_e_m );        \
@@ -626,7 +634,7 @@ private:
     catch( ... ) {}                                                            \
     if ( !caught )                                                             \
     {                                                                          \
-        chaos::uni::UTF8String f_e_m;                                          \
+        chaos::str::UTF8String f_e_m;                                          \
         f_e_m << "Exception type: " << #exception_type << " not thrown";       \
         chaos::test::internal::TestCore::logger().report_check_fail(           \
                 "CHAOS_CHECK_THROW", __FILE__, __LINE__, f_e_m );              \

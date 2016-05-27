@@ -9,10 +9,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "chaoscore/base/uni/UTF8String.hpp"
-
-// TODO: REMOVE ME
-#include <iostream>
+#include "chaoscore/base/str/UTF8String.hpp"
 
 namespace chaos
 {
@@ -26,7 +23,7 @@ namespace format
 //------------------------------------------------------------------------------
 
 /*!
- * \brief Converts the given integer type to a chaos::uni::UTF8String binary
+ * \brief Converts the given integer type to a chaos::str::UTF8String binary
  *        representation.
  *
  * \warning If the input `value` is not an integer type (int, long,
@@ -46,10 +43,10 @@ namespace format
  *
  */
 template< typename T >
-chaos::uni::UTF8String int_to_binary( T value, bool zero_pad = true )
+chaos::str::UTF8String int_to_binary( T value, bool zero_pad = true )
 {
     // returned string which will hold the binary result
-    chaos::uni::UTF8String u( "0b" );
+    chaos::str::UTF8String u( "0b" );
 
     std::size_t bit_count = sizeof( T ) * 8;
     // use bitwise mask to evaluate whether each bit is a one or a zero
@@ -78,7 +75,7 @@ chaos::uni::UTF8String int_to_binary( T value, bool zero_pad = true )
 }
 
 /*!
- * \brief Converts the given integer type to a chaos::uni::UTF8String
+ * \brief Converts the given integer type to a chaos::str::UTF8String
  *        hexadecimal representation.
  *
  * \warning If the input `value` is not an integer type (int, long,
@@ -98,7 +95,7 @@ chaos::uni::UTF8String int_to_binary( T value, bool zero_pad = true )
  * \endcode
  */
 template< typename T >
-chaos::uni::UTF8String int_to_hex( T value, bool zero_pad = true )
+chaos::str::UTF8String int_to_hex( T value, bool zero_pad = true )
 {
     std::stringstream ss;
     ss << "0x";
@@ -108,7 +105,7 @@ chaos::uni::UTF8String int_to_hex( T value, bool zero_pad = true )
     }
     ss << std::uppercase << std::hex << value;
 
-    return chaos::uni::UTF8String( ss.str().c_str() );
+    return chaos::str::UTF8String( ss.str().c_str() );
 }
 
 /*!
@@ -124,7 +121,7 @@ chaos::uni::UTF8String int_to_hex( T value, bool zero_pad = true )
  * \param trim_trailing whether trailing whitespace should be not be added.
  */
 void centre_text(
-        chaos::uni::UTF8String& text,
+        chaos::str::UTF8String& text,
         const chaos::uint32     line_length,
         bool                    trim_trailing = false );
 

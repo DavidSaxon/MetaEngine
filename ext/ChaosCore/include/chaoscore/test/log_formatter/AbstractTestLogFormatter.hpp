@@ -12,7 +12,7 @@
 #include <map>
 #include <vector>
 
-#include "chaoscore/base/uni/UTF8String.hpp"
+#include "chaoscore/base/str/UTF8String.hpp"
 
 namespace chaos
 {
@@ -66,25 +66,25 @@ public:
             chaos::uint64 checks_failed ) = 0;
 
     virtual void open_test(
-            const chaos::uni::UTF8String& path,
-            const chaos::uni::UTF8String& id ) = 0;
+            const chaos::str::UTF8String& path,
+            const chaos::str::UTF8String& id ) = 0;
 
     virtual void close_test() = 0;
 
-    virtual void report_crash( const chaos::uni::UTF8String& info ) = 0;
+    virtual void report_crash( const chaos::str::UTF8String& info ) = 0;
 
     virtual void report_check_pass(
-            const chaos::uni::UTF8String& type,
-            const chaos::uni::UTF8String& file,
+            const chaos::str::UTF8String& type,
+            const chaos::str::UTF8String& file,
                   chaos::int32            line ) = 0;
 
     virtual void report_check_fail(
-            const chaos::uni::UTF8String& type,
-            const chaos::uni::UTF8String& file,
+            const chaos::str::UTF8String& type,
+            const chaos::str::UTF8String& file,
                   chaos::int32            line,
-            const chaos::uni::UTF8String& message ) = 0;
+            const chaos::str::UTF8String& message ) = 0;
 
-    virtual void write_message( const chaos::uni::UTF8String& message ) = 0;
+    virtual void write_message( const chaos::str::UTF8String& message ) = 0;
 
     virtual void finialise_test_report(
             chaos::uint64 checks_passed,
@@ -107,11 +107,11 @@ protected:
     /*!
      * \brief mapping from log message to the number of times they've occurred.
      */
-    std::map< chaos::uni::UTF8String, chaos::uint64 > m_occurrence_map;
+    std::map< chaos::str::UTF8String, chaos::uint64 > m_occurrence_map;
     /*!
      * \brief holds the order for the occurrence mapping.
      */
-    std::vector< chaos::uni::UTF8String > m_occurrence_order;
+    std::vector< chaos::str::UTF8String > m_occurrence_order;
 
     /*!
      * \brief Stores a log entry and the number of times it has consecutively
@@ -119,7 +119,7 @@ protected:
      */
     struct LogOccurence
     {
-        chaos::uni::UTF8String entry;
+        chaos::str::UTF8String entry;
         chaos::uint32          count;
     };
     /*!
@@ -134,7 +134,7 @@ protected:
     /*!
      * \brief Adds an occurrence of a log entry to the occurrence map.
      */
-    void add_occurrence( const chaos::uni::UTF8String& entry );
+    void add_occurrence( const chaos::str::UTF8String& entry );
 };
 
 } // namespace log_formatter
