@@ -7,4 +7,6 @@ CMakeCache.txt
 Makefile
 cmake_install.cmake
 
+docs/build/*
+
 deploy/*
