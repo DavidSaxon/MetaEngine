@@ -138,7 +138,7 @@ public:
      * \brief Opens the FileHandle to the internal path.
      *
      * \throws chaos::ex::StateError If this FileHandle is already open.
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened.
+     * \throws chaos::ex::InvalidPathError If the path cannot be opened.
      */
     virtual void open() = 0;
 
@@ -155,7 +155,7 @@ public:
      * \param path The path to the file to use.
      *
      * \throws chaos::ex::StateError If this FileHandle is already open.
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened.
+     * \throws chaos::ex::InvalidPathError If the path cannot be opened.
      */
     virtual void open(const chaos::io::sys::Path& path);
 

@@ -5,7 +5,7 @@
 #ifndef CHAOSCORE_TEST_EXCEPTIONS_HPP_
 #define CHAOSCORE_TEST_EXCEPTIONS_HPP_
 
-#include "chaoscore/base/BaseExceptions.hpp"
+#include "chaoscore/base/Exceptions.hpp"
 
 namespace chaos
 {

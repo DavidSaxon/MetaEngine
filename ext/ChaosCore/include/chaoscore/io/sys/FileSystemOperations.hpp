@@ -6,7 +6,6 @@
 #ifndef CHAOSCORE_IO_SYS_FILESYSTEMOPERATIONS
 #define CHAOSCORE_IO_SYS_FILESYSTEMOPERATIONS
 
-#include "chaoscore/io/sys/FileSystemExceptions.hpp"
 #include "chaoscore/io/sys/Path.hpp"
 
 namespace chaos
@@ -96,11 +95,8 @@ std::vector< chaos::io::sys::Path > list_rec(
 /*!
  * \brief Attempts to create the directory at the given path.
  *
- * \throws chaos::io::sys::AmbiguousPathError If the path already exists on the
- *                                            file system but is not a directory
- *
- * \throws chaos::io::sys::CreateDirectoryError If directory creation was
- *                                              attempted but failed.
+ * \throws chaos::ex::InvalidPathError If directory creation was attempted
+ *                                          but failed.
  *
  * \return True is a new directory was created, false if the directory already
  *         exists.
@@ -116,7 +112,7 @@ bool create_directory( const chaos::io::sys::Path& path );
  * \note This operation will delete symbolic link objects but will not follow
  *       them to delete the path they point to.
  *
- * \throws chaos::io::sys::InvalidPathError If the path cannot be accessed
+ * \throws chaos::ex::InvalidPathError If the path cannot be accessed
  *                                          and/or modified to be deleted.
  */
 void delete_path( const chaos::io::sys::Path& path );
@@ -131,7 +127,7 @@ void delete_path( const chaos::io::sys::Path& path );
  * \note This operation will delete symbolic link objects but will not follow
  *       them to delete the path they point to.
  *
- * \throws chaos::io::sys::InvalidPathError If a path in the directory hierarchy
+ * \throws chaos::ex::InvalidPathError If a path in the directory hierarchy
  *                                          cannot be accessed and/or modified
  *                                          to be deleted.
  */
@@ -160,12 +156,9 @@ void delete_path_rec( const chaos::io::sys::Path& path );
  *
  * \endcode
  *
- * \throws chaos::io::sys::AmbiguousPathError If one of the directories in the
- *                                           path already exists but is not a
- *                                           directory.
- * \throws chaos::io::sys::CreateDirectoryError If one of the directories in the
- *                                              path was attempted to be created
- *                                              but failed.
+ * \throws chaos::ex::InvalidPathError If one of the directories in the
+ *                                          path was attempted to be created but
+ *                                          failed.
  */
  void validate( const chaos::io::sys::Path& path );
 

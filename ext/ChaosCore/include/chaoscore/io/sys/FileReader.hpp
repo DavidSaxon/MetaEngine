@@ -76,7 +76,7 @@ public:
      * \param newline The newline symbol used in the file to read.
      *                See set_newline().
      *
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened.
+     * \throws chaos::ex::InvalidPathError If the path cannot be opened.
      */
     FileReader(
             const chaos::io::sys::Path& path,
@@ -104,7 +104,7 @@ public:
      * \brief Opens this FileReader to the internal path.
      *
      * \throws chaos::ex::StateError If this FileReader is already open.
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened.
+     * \throws chaos::ex::InvalidPathError If the path cannot be opened.
      */
     virtual void open();
 

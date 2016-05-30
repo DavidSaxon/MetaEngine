@@ -1,13 +1,22 @@
 #include <iostream>
 
+#include <chaoscore/base/Exceptions.hpp>
 #include <chaoscore/io/sys/FileReader.hpp>
 
 #include <json/json.h>
 
+#define META_FROM_SOURCE
 #include "meta/Data.hpp"
+#undef META_FROM_SOURCE
 
 namespace meta
 {
+
+//------------------------------------------------------------------------------
+//                                    GLOBALS
+//------------------------------------------------------------------------------
+
+bool warn_on_fallback = false;
 
 //------------------------------------------------------------------------------
 //                                  CONSTRUCTORS
@@ -61,6 +70,7 @@ void Data::reload()
             chaos::str::UTF8String::Opt::SKIP_VALID_CHECK);
 
         // attempt to read the data from the file
+        bool read_success = false;
         try
         {
             // open the reader
@@ -73,10 +83,11 @@ void Data::reload()
             json_file.read(file_data);
             // close
             json_file.close();
+            read_success = true;
         }
         catch(const std::exception& exc)
         {
-            // no fallback plan, just rethrow
+            // no fallback plan, just re-throw
             if(m_str == nullptr)
             {
                 throw exc;
@@ -91,40 +102,64 @@ void Data::reload()
             }
         }
 
-        // parse the Json
-        m_root.reset(new Json::Value());
-        Json::Reader reader;
-        bool parse_sucess = reader.parse(
-            file_data.get_raw(),
-            file_data.get_raw() + (file_data.get_byte_length() - 1),
-            *m_root
-        );
-
-        // if parsing failed then clean up and either throw or fallback
-        if(!parse_sucess)
+        // parse
+        if(read_success)
         {
-            m_root.reset();
-            // throw
-            if(m_str == nullptr)
-            {
-                // TODO: parse error
-            }
-            // fallback
-            else if(warn_on_fallback)
-            {
-                // print a warning
-                std::cerr << "MetaEngine: Failed to parse JSON from file: \""
-                          << m_path.to_native() << "\" Failing back to reading "
-                          << "data from memory." << std::endl;
-            }
+            parse_str(file_data, m_str == nullptr);
         }
     }
 
     // if there is no data yet, attempt to fall back to memory
-    // if(json_data.is_empty() && m_str != nullptr)
-    // {
-    //     json_data
-    // }
+    if(m_root == nullptr && m_str != nullptr)
+    {
+        parse_str(*m_str, true);
+    }
+}
+
+//------------------------------------------------------------------------------
+//                            PRIVATE MEMBER FUNCTIONS
+//------------------------------------------------------------------------------
+
+void Data::parse_str(const chaos::str::UTF8String& str, bool throw_on_failure)
+{
+    // clear the current value
+    m_root.reset(new Json::Value());
+
+    // parse the Json
+    Json::Reader reader;
+    bool parse_sucess = reader.parse(
+        str.get_raw(),
+        str.get_raw() + (str.get_byte_length() - 1),
+        *m_root
+    );
+
+    // if parsing failed then clean up and either throw or fallback
+    if(!parse_sucess)
+    {
+        std::cout << "parse fail" << std::endl;
+
+        m_root.reset();
+        // throw
+        if(throw_on_failure)
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "Failed to parse JSON from file: \""
+                          << m_path.to_native() << "\" with message:\n"
+                          << reader.getFormattedErrorMessages();
+            throw chaos::ex::ParseError(error_message);
+        }
+        // fallback
+        else if(warn_on_fallback)
+        {
+            std::cout << "warning??" << std::endl;
+
+            // print a warning
+            std::cerr << "MetaEngine: Failed to parse JSON from file: \""
+                      << m_path.to_native() << "\" with message:\n"
+                      << reader.getFormattedErrorMessages() << "\nFalling "
+                      << "back to reading data from memory." << std::endl;
+        }
+    }
 }
 
 } // namespace meta

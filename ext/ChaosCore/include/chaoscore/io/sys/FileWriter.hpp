@@ -81,7 +81,7 @@ public:
      * \param newline The newline symbol that will be used to write lines to the
      *                file.
      *
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened.
+     * \throws chaos::ex::InvalidPathError If the path cannot be opened.
      */
     FileWriter(
             const chaos::io::sys::Path& path,
@@ -115,7 +115,7 @@ public:
      *       relevant Unicode BOM to be written to the start of the file.
      *
      * \throws chaos::ex::StateError If this FileWriter is already open.
-     * \throws chaos::io::sys::InvalidPathError If the path cannot be opened.
+     * \throws chaos::ex::InvalidPathError If the path cannot be opened.
      */
     virtual void open();
 
