@@ -11,80 +11,299 @@ namespace meta
 {
 
 //------------------------------------------------------------------------------
-//                                   UTF8STRING
+//                              GET IMPLEMENTATIONS
 //------------------------------------------------------------------------------
 
-template<>
-inline chaos::str::UTF8String& Data::get(
+template<typename ValueType>
+inline ValueType& Data::get(
         const chaos::str::UTF8String& key,
-        chaos::str::UTF8String& value) const
+        ValueType& value) const
 {
     // get the JSON value
-    const Json::Value* j_str = resolve_key(key);
-    // check that we convert
-    if(!j_str->isString())
+    const Json::Value* j_value = resolve_key(key);
+
+    // check if the conversion is possible
+    if(!is_type<ValueType>(j_value))
     {
         chaos::str::UTF8String error_message;
         error_message << "Unable to convert value for key: \"" << key << "\" "
-                      << "to a value of type: <chaos::str::UTF8String>.";
+                      << "to a value of type: <"
+                      << chaos::introspect::get_typename<ValueType>() << ">";
         throw chaos::ex::TypeError(error_message);
     }
 
-    // assign and return
-    value.assign(j_str->asCString());
+    // perform the conversion and return
+    as_type<ValueType>(j_value, value);
     return value;
 }
 
-//------------------------------------------------------------------------------
-//                               UTF8STRING VECTOR
-//------------------------------------------------------------------------------
-
-template<>
-inline std::vector<chaos::str::UTF8String>& Data::get(
+template<typename ValueType>
+std::vector<ValueType>& Data::get(
         const chaos::str::UTF8String& key,
-        std::vector<chaos::str::UTF8String>& value) const
+        std::vector<ValueType>& value) const
 {
     // temporary vector
-    std::vector<chaos::str::UTF8String> temp;
+    std::vector<ValueType> temp;
     // get the JSON value
     const Json::Value* j_array = resolve_key(key);
-    // check that we can convert
     bool can_convert = true;
     // check that we have a list first
     if(!j_array->isArray())
     {
         can_convert = false;
     }
-    // check each value is a string
+    // check and get each value
     else
     {
-        CHAOS_FOR_EACH(j_str, (*j_array))
+        // CHAOS_CONST_FOR_EACH(j_value, (*j_array))
+        // {
+        Json::Value::const_iterator j_value;
+        for(j_value = j_array->begin(); j_value != j_array->end(); ++j_value)
         {
-            if(!j_str->isString())
+            // check if the value can be converted
+            if(!is_type<ValueType>(&(*j_value)))
             {
                 can_convert = false;
                 break;
             }
-            else
-            {
-                temp.push_back(chaos::str::UTF8String(j_str->asCString()));
-            }
+            // perform the conversion
+            ValueType element;
+            as_type<ValueType>(&(*j_value), element);
+            temp.push_back(element);
         }
     }
+
+    // throw if the conversion cannot be done
     if(!can_convert)
     {
         chaos::str::UTF8String error_message;
         error_message << "Unable to convert value for key: \"" << key << "\" "
-                      << "to a value of type: "
-                      << "<std::vector<chaos::str::UTF8String>>.";
+                      << "to a value of type: <std::vector<"
+                      << chaos::introspect::get_typename<ValueType>() << ">>";
         throw chaos::ex::TypeError(error_message);
     }
 
-    // copy list for returning
+    // copy temporary and return
     value = temp;
-
     return value;
 }
+
+//------------------------------------------------------------------------------
+//                                      BOOL
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<bool>(const Json::Value* value) const
+{
+    return value->isBool();
+}
+
+template<>
+inline void Data::as_type<bool>(const Json::Value* value, bool& ret) const
+{
+    ret = value->asBool();
+}
+
+//------------------------------------------------------------------------------
+//                                      INT8
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::int8>(const Json::Value* value) const
+{
+    return value->isInt();
+}
+
+template<>
+inline void Data::as_type<chaos::int8>(
+        const Json::Value* value,
+        chaos::int8& ret) const
+{
+    ret = static_cast<chaos::int8>(value->asInt());
+}
+
+//------------------------------------------------------------------------------
+//                                     UINT8
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::uint8>(const Json::Value* value) const
+{
+    return value->isUInt();
+}
+
+template<>
+inline void Data::as_type<chaos::uint8>(
+        const Json::Value* value,
+        chaos::uint8& ret) const
+{
+    ret = static_cast<chaos::uint8>(value->asUInt());
+}
+
+//------------------------------------------------------------------------------
+//                                     INT16
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::int16>(const Json::Value* value) const
+{
+    return value->isInt();
+}
+
+template<>
+inline void Data::as_type<chaos::int16>(
+        const Json::Value* value,
+        chaos::int16& ret) const
+{
+    ret = static_cast<chaos::int16>(value->asInt());
+}
+
+//------------------------------------------------------------------------------
+//                                     UINT16
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::uint16>(const Json::Value* value) const
+{
+    return value->isUInt();
+}
+
+template<>
+inline void Data::as_type<chaos::uint16>(
+        const Json::Value* value,
+        chaos::uint16& ret) const
+{
+    ret = static_cast<chaos::uint16>(value->asUInt());
+}
+
+//------------------------------------------------------------------------------
+//                                     INT32
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::int32>(const Json::Value* value) const
+{
+    return value->isInt();
+}
+
+template<>
+inline void Data::as_type<chaos::int32>(
+        const Json::Value* value,
+        chaos::int32& ret) const
+{
+    ret = static_cast<chaos::int32>(value->asInt());
+}
+
+//------------------------------------------------------------------------------
+//                                     UINT32
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::uint32>(const Json::Value* value) const
+{
+    return value->isUInt();
+}
+
+template<>
+inline void Data::as_type<chaos::uint32>(
+        const Json::Value* value,
+        chaos::uint32& ret) const
+{
+    ret = static_cast<chaos::uint32>(value->asUInt());
+}
+
+//------------------------------------------------------------------------------
+//                                     INT64
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::int64>(const Json::Value* value) const
+{
+    return value->isInt();
+}
+
+template<>
+inline void Data::as_type<chaos::int64>(
+        const Json::Value* value,
+        chaos::int64& ret) const
+{
+    ret = static_cast<chaos::int64>(value->asInt64());
+}
+
+//------------------------------------------------------------------------------
+//                                     UINT64
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::uint64>(const Json::Value* value) const
+{
+    return value->isUInt();
+}
+
+template<>
+inline void Data::as_type<chaos::uint64>(
+        const Json::Value* value,
+        chaos::uint64& ret) const
+{
+    ret = static_cast<chaos::uint64>(value->asUInt64());
+}
+
+//------------------------------------------------------------------------------
+//                                     FLOAT
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<float>(const Json::Value* value) const
+{
+    return value->isDouble();
+}
+
+template<>
+inline void Data::as_type<float>(
+        const Json::Value* value,
+        float& ret) const
+{
+    ret = value->asFloat();
+}
+
+//------------------------------------------------------------------------------
+//                                     DOUBLE
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<double>(const Json::Value* value) const
+{
+    return value->isDouble();
+}
+
+template<>
+inline void Data::as_type<double>(
+        const Json::Value* value,
+        double& ret) const
+{
+    ret = value->asDouble();
+}
+
+//------------------------------------------------------------------------------
+//                                   UTF8STRING
+//------------------------------------------------------------------------------
+
+template <>
+inline bool Data::is_type<chaos::str::UTF8String>(
+        const Json::Value* value) const
+{
+    return value->isString();
+}
+
+template<>
+inline void Data::as_type<chaos::str::UTF8String>(
+        const Json::Value* value,
+        chaos::str::UTF8String& ret) const
+{
+    ret.assign(value->asCString());
+}
+
+// TODO: path
 
 } // namespace meta
 

@@ -57,14 +57,38 @@ public:
      * \brief TODO:
      */
     template<typename ValueType>
-    ValueType& get(const chaos::str::UTF8String& key, ValueType& value) const
+    ValueType& get(const chaos::str::UTF8String& key, ValueType& value) const;
+
+    /*!
+     * \brief TODO:
+     */
+    template<typename ValueType>
+    std::vector<ValueType>& get(
+            const chaos::str::UTF8String& key,
+            std::vector<ValueType>& value) const;
+
+protected:
+
+    //--------------------------------------------------------------------------
+    //                         PROTECTED MEMBER FUNCTIONS
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief TODO
+     */
+    template <typename Type>
+    bool is_type(const Json::Value* value) const
     {
-        // throw here, since if the type is supported it should be hitting one
-        // of the template specialisations.
-        chaos::str::UTF8String error_message;
-        error_message << "Attempted to get meta value of unsupported type: <"
-                      << chaos::introspect::get_typename<ValueType>() << ">. ";
-        throw chaos::ex::TypeError(error_message);
+        return false;
+    }
+
+    /*!
+     * \brief TODO:
+     */
+    template<typename Type>
+    void as_type(const Json::Value* value, Type& ret) const
+    {
+        // do nothing by default
     }
 
 private:

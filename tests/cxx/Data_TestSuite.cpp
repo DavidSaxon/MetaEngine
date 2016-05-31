@@ -37,18 +37,19 @@ CHAOS_TEST_UNIT(constructor)
     // meta::Data data(meta_path);
     meta::Data data(meta_path, &fallback);
 
+    chaos::uint8 remove_me;
+    remove_me = data.get("remove_me", remove_me);
+    std::cout << "remove_me: " << remove_me << std::endl;
 
-    // chaos::str::UTF8String remove_me;
-    // remove_me =
-    //     data.get<chaos::str::UTF8String>("remove_me", remove_me);
+    // std::vector<chaos::uint8> remove_me;
+    // remove_me = data.get("remove_me", remove_me);
+    // CHAOS_PRINT_ITERABLE(remove_me);
 
 
-    // std::cout << "remove_me: " << remove_me << std::endl;
+    // std::vector<chaos::str::UTF8String> resource_path_v;
+    // resource_path_v = data.get("resource_path", resource_path_v);
 
-    std::vector<chaos::str::UTF8String> resource_path_v;
-    resource_path_v = data.get("resource_path", resource_path_v);
-
-    CHAOS_PRINT_ITERABLE(resource_path_v);
+    // CHAOS_PRINT_ITERABLE(resource_path_v);
 }
 
 } // namespace
