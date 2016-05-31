@@ -5,16 +5,10 @@
 #ifndef METAENGINE_DATA_HPP_
 #define METAENGINE_DATA_HPP_
 
+#include <chaoscore/base/introspect/IntrospectOperations.hpp>
 #include <chaoscore/io/sys/Path.hpp>
 
-//------------------------------------------------------------------------------
-//                              FORWARD DECLARATIONS
-//------------------------------------------------------------------------------
-
-namespace Json
-{
-class Value;
-} // namespace Json
+#include <json/json.h>
 
 namespace meta
 {
@@ -63,10 +57,14 @@ public:
      * \brief TODO:
      */
     template<typename ValueType>
-    ValueType get() const
+    ValueType& get(const chaos::str::UTF8String& key, ValueType& value) const
     {
         // throw here, since if the type is supported it should be hitting one
         // of the template specialisations.
+        chaos::str::UTF8String error_message;
+        error_message << "Attempted to get meta value of unsupported type: <"
+                      << chaos::introspect::get_typename<ValueType>() << ">. ";
+        throw chaos::ex::TypeError(error_message);
     }
 
 private:
@@ -107,6 +105,11 @@ private:
      *                         fails.
      */
     void parse_str(const chaos::str::UTF8String& str, bool throw_on_failure);
+
+    /*!
+     * \brief Returns the Json Value associated with the given key.
+     */
+    const Json::Value* resolve_key(const chaos::str::UTF8String& key) const;
 };
 
 } // namespace meta
@@ -152,3 +155,6 @@ struct WarnOnFallbackSetter
 
 #endif
 // IN_DOXYGEN
+
+
+#include "meta/Data.inl"

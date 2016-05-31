@@ -286,6 +286,12 @@ public:
      */
     UTF8String(const UTF8String& other);
 
+    /*!
+     * \brief Move constructor.
+     *
+     * \param other The UTF8String to move resources from.
+     */
+    UTF8String(UTF8String&& other);
 
     //--------------------------------------------------------------------------
     //                                 DESTRUCTOR

@@ -38,32 +38,17 @@ CHAOS_TEST_UNIT(constructor)
     meta::Data data(meta_path, &fallback);
 
 
+    // chaos::str::UTF8String remove_me;
+    // remove_me =
+    //     data.get<chaos::str::UTF8String>("remove_me", remove_me);
 
 
-    // chaos::io::sys::FileReader meta_file(
-    //     meta_path,
-    //     chaos::io::sys::FileReader::ENCODING_DETECT,
-    //     chaos::io::sys::FileReader::NEWLINE_UNIX
-    // );
+    // std::cout << "remove_me: " << remove_me << std::endl;
 
-    // // read the data from the file
-    // const chaos::str::UTF8String::Opt assume_valid(
-    //     chaos::str::UTF8String::Opt::SKIP_VALID_CHECK);
-    // chaos::str::UTF8String meta_data(assume_valid);
-    // meta_file.read(meta_data);
+    std::vector<chaos::str::UTF8String> resource_path_v;
+    resource_path_v = data.get("resource_path", resource_path_v);
 
-    // Json::Value root;
-    // Json::Reader reader;
-    // bool parse_sucess = reader.parse(
-    //     meta_data.get_raw(),
-    //     meta_data.get_raw() + (meta_data.get_byte_length() - 1),
-    //     root
-    // );
-
-    // std::cout << "parse success?? " << parse_sucess << std::endl;
-
-    // std::cout << "read: " << root.get("value_1", "bad").asString()
-    //           << std::endl;
+    CHAOS_PRINT_ITERABLE(resource_path_v);
 }
 
 } // namespace

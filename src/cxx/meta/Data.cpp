@@ -3,8 +3,6 @@
 #include <chaoscore/base/Exceptions.hpp>
 #include <chaoscore/io/sys/FileReader.hpp>
 
-#include <json/json.h>
-
 #define META_FROM_SOURCE
 #include "meta/Data.hpp"
 #undef META_FROM_SOURCE
@@ -160,6 +158,31 @@ void Data::parse_str(const chaos::str::UTF8String& str, bool throw_on_failure)
                       << "back to reading data from memory." << std::endl;
         }
     }
+}
+
+const Json::Value* Data::resolve_key(const chaos::str::UTF8String& key) const
+{
+    // the value to be returned
+    const Json::Value* value = m_root.get();
+    // split the hierarchy of the key
+    std::vector<chaos::str::UTF8String> key_elements(key.split("."));
+    chaos::str::UTF8String key_so_far;
+    CHAOS_CONST_FOR_EACH(it, key_elements)
+    {
+        key_so_far += *it;
+        // get the value associated with this key in the hierarchy
+        value = &(*value)[it->get_raw()];
+        // did we get back a valid value?
+        if(value->isNull())
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "No value exists with the key: " << key_so_far;
+            throw chaos::ex::KeyError(error_message);
+        }
+        key_so_far += ".";
+    }
+
+    return value;
 }
 
 } // namespace meta

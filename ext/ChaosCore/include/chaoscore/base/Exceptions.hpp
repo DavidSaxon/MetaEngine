@@ -111,6 +111,25 @@ public:
 };
 
 //------------------------------------------------------------------------------
+//                                   TYPE ERROR
+//------------------------------------------------------------------------------
+
+/*!
+ * \brief Warns that an invalid type has been supplied.
+ */
+class TypeError : public ChaosException
+{
+public:
+
+    TypeError(const chaos::str::UTF8String& message)
+        :
+        ChaosException("TypeError", message)
+    {
+    }
+};
+
+
+//------------------------------------------------------------------------------
 //                                  VALUE ERROR
 //------------------------------------------------------------------------------
 
