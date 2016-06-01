@@ -7,6 +7,8 @@
 
 #include "meta/Data.hpp"
 
+#include <chaoscore/io/sys/Path.hpp>
+
 namespace meta
 {
 
@@ -55,8 +57,6 @@ std::vector<ValueType>& Data::get(
     // check and get each value
     else
     {
-        // CHAOS_CONST_FOR_EACH(j_value, (*j_array))
-        // {
         Json::Value::const_iterator j_value;
         for(j_value = j_array->begin(); j_value != j_array->end(); ++j_value)
         {
@@ -85,6 +85,56 @@ std::vector<ValueType>& Data::get(
 
     // copy temporary and return
     value = temp;
+    return value;
+}
+
+//------------------------------------------------------------------------------
+//                              PATH IMPLEMENTATION
+//------------------------------------------------------------------------------
+
+template<>
+inline chaos::io::sys::Path& Data::get(
+        const chaos::str::UTF8String& key,
+        chaos::io::sys::Path& value) const
+{
+    // check cache first
+    std::map<chaos::str::UTF8String, chaos::io::sys::Path>::const_iterator
+        cached = m_path_cache.find(key);
+    if(cached != m_path_cache.end())
+    {
+        // assign from cache entry
+        value = cached->second;
+    }
+    else
+    {
+        // attempt to read the value as a string list
+        std::vector<chaos::str::UTF8String> path_elements;
+        // catch any errors and rethrow
+        try
+        {
+            get(key, path_elements);
+        }
+        catch(chaos::ex::TypeError)
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "Unable to convert value for key: \"" << key << "\" "
+                          << "to a value of type: <chaos::io::sys::Path>. A list "
+                          << "of strings was expected but not found.";
+            throw chaos::ex::TypeError(error_message);
+        }
+
+        // expand the list that was retrieved
+        std::vector<chaos::str::UTF8String> traversed_keys;
+        traversed_keys.push_back(key);
+        path_expansion(path_elements, traversed_keys);
+
+        // cache the path
+        m_path_cache[key] = chaos::io::sys::Path(path_elements);
+
+        // assign from new cache entry
+        value = m_path_cache[key];
+    }
+
     return value;
 }
 
@@ -302,8 +352,6 @@ inline void Data::as_type<chaos::str::UTF8String>(
 {
     ret.assign(value->asCString());
 }
-
-// TODO: path
 
 } // namespace meta
 

@@ -74,6 +74,11 @@ protected:
     //--------------------------------------------------------------------------
 
     /*!
+     * \brief Returns the Json Value associated with the given key.
+     */
+    const Json::Value* resolve_key(const chaos::str::UTF8String& key) const;
+
+    /*!
      * \brief TODO
      */
     template <typename Type>
@@ -116,6 +121,11 @@ private:
      */
     std::unique_ptr<Json::Value> m_root;
 
+    /*!
+     * \brief Caches keys to paths that have been resolved for them.
+     */
+    mutable std::map<chaos::str::UTF8String, chaos::io::sys::Path> m_path_cache;
+
     //--------------------------------------------------------------------------
     //                          PRIVATE MEMBER FUNCTIONS
     //--------------------------------------------------------------------------
@@ -131,9 +141,21 @@ private:
     void parse_str(const chaos::str::UTF8String& str, bool throw_on_failure);
 
     /*!
-     * \brief Returns the Json Value associated with the given key.
+     * \brief Replaces any elements of the given list that have expansion syntax
+     *        with their expanded lists.
+     *
+     * \param elements When passed in should contain the elements of the path to
+     *                 perform expansion on. After this function has completed
+     *                 this will hold with the elements of the path with
+     *                 expansion applied.
+     * \param traversed_keys Retains a list of keys the have been recursively
+     *                       resolved in order to detect and escape cyclic
+     *                       loops. Initially this should be a list containing
+     *                       the initial path's key.
      */
-    const Json::Value* resolve_key(const chaos::str::UTF8String& key) const;
+    void path_expansion(
+            std::vector<chaos::str::UTF8String>& elements,
+            std::vector<chaos::str::UTF8String> traversed_keys) const;
 };
 
 } // namespace meta

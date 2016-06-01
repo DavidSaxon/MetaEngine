@@ -92,6 +92,24 @@ private:
 };
 
 //------------------------------------------------------------------------------
+//                                 RUNTIME ERROR
+//------------------------------------------------------------------------------
+
+/*!
+ * \brief Warns of an unexpected error that occurred at process runtime.
+ */
+class RuntimeError : public ChaosException
+{
+public:
+
+    RuntimeError(const chaos::str::UTF8String& message)
+        :
+        ChaosException("RuntimeError", message)
+    {
+    }
+};
+
+//------------------------------------------------------------------------------
 //                             NOT IMPLEMENTED ERROR
 //------------------------------------------------------------------------------
 
