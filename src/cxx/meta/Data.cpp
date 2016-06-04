@@ -25,16 +25,16 @@ Data::Data(const chaos::io::sys::Path& path)
     :
     m_using_path(true),
     m_path      (path),
-    m_str       (nullptr),
+    m_mem       (nullptr),
     m_root      (nullptr)
 {
     reload();
 }
 
-Data::Data(const chaos::str::UTF8String* const str)
+Data::Data(const chaos::str::UTF8String* const mem)
     :
     m_using_path(false),
-    m_str       (str),
+    m_mem       (mem),
     m_root      (nullptr)
 {
     reload();
@@ -42,11 +42,11 @@ Data::Data(const chaos::str::UTF8String* const str)
 
 Data::Data(
         const chaos::io::sys::Path& path,
-        const chaos::str::UTF8String* const str)
+        const chaos::str::UTF8String* const mem)
     :
     m_using_path(true),
     m_path      (path),
-    m_str       (str),
+    m_mem       (mem),
     m_root      (nullptr)
 {
     reload();
@@ -88,7 +88,7 @@ void Data::reload()
         catch(const std::exception& exc)
         {
             // no fallback plan, just re-throw
-            if(m_str == nullptr)
+            if(m_mem == nullptr)
             {
                 throw exc;
             }
@@ -105,14 +105,14 @@ void Data::reload()
         // parse
         if(read_success)
         {
-            parse_str(file_data, m_str == nullptr);
+            parse_str(file_data, m_mem == nullptr);
         }
     }
 
     // if there is no data yet, attempt to fall back to memory
-    if(m_root == nullptr && m_str != nullptr)
+    if(m_root == nullptr && m_mem != nullptr)
     {
-        parse_str(*m_str, true);
+        parse_str(*m_mem, true);
     }
 }
 
@@ -165,8 +165,6 @@ void Data::parse_str(const chaos::str::UTF8String& str, bool throw_on_failure)
     // if parsing failed then clean up and either throw or fallback
     if(!parse_sucess)
     {
-        std::cout << "parse fail" << std::endl;
-
         m_root.reset();
         // throw
         if(throw_on_failure)
@@ -180,8 +178,6 @@ void Data::parse_str(const chaos::str::UTF8String& str, bool throw_on_failure)
         // fallback
         else if(warn_on_fallback)
         {
-            std::cout << "warning??" << std::endl;
-
             // print a warning
             std::cerr << "MetaEngine: Failed to parse JSON from file: \""
                       << m_path.to_native() << "\" with message:\n"

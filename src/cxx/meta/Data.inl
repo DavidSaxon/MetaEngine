@@ -12,6 +12,9 @@
 namespace meta
 {
 
+// hide from doxygen
+#ifndef IN_DOXYGEN
+
 //------------------------------------------------------------------------------
 //                              GET IMPLEMENTATIONS
 //------------------------------------------------------------------------------
@@ -88,10 +91,44 @@ std::vector<ValueType>& Data::get(
     return value;
 }
 
+#endif
+// IN_DOXYGEN
+
 //------------------------------------------------------------------------------
 //                              PATH IMPLEMENTATION
 //------------------------------------------------------------------------------
 
+/*!
+ * \brief Attempts to retrieve a chaos::io::sys::Path from internal data using
+ *        the key.
+ *
+ * See data::get().
+ *
+ * Paths should be defined in the JSON file as an array of strings:
+ *
+ * \code
+ * "path_1": ["/", "path", "to", "location"]
+ * \endcode
+ *
+ * Retrieving this value would provide the following path:
+ * ```/path/to/location```.
+ *
+ * Paths also support expansion of other values using the ```${key}``` syntax.
+ * For example:
+ *
+ * \code
+ * "path_2": ["${path_1}", sub", "folder"]
+ * \endcode
+ *
+ * Would be retrieved as: ```/path/to/location/sub/folder```.
+ *
+ * \throws chaos::ex::KeyError If the key does not exist in the data.
+ * \throws chaos::ex::TypeError If the value cannot be parsed as a
+ *                              chaos::io::sys::Path.
+ * \throws chaos::ex::RuntimeError If the a cyclic expansion is detected (i.e.
+ *                                 path_1 references path_2 but path_2
+ *                                 references path_1).
+ */
 template<>
 inline chaos::io::sys::Path& Data::get(
         const chaos::str::UTF8String& key,
@@ -117,9 +154,9 @@ inline chaos::io::sys::Path& Data::get(
         catch(chaos::ex::TypeError)
         {
             chaos::str::UTF8String error_message;
-            error_message << "Unable to convert value for key: \"" << key << "\" "
-                          << "to a value of type: <chaos::io::sys::Path>. A list "
-                          << "of strings was expected but not found.";
+            error_message << "Unable to convert value for key: \"" << key
+                          << "\" to a value of type: <chaos::io::sys::Path>. A "
+                          << "list of strings was expected but not found.";
             throw chaos::ex::TypeError(error_message);
         }
 
@@ -137,6 +174,9 @@ inline chaos::io::sys::Path& Data::get(
 
     return value;
 }
+
+// hide from doxygen
+#ifndef IN_DOXYGEN
 
 //------------------------------------------------------------------------------
 //                                      BOOL
@@ -352,6 +392,9 @@ inline void Data::as_type<chaos::str::UTF8String>(
 {
     ret.assign(value->asCString());
 }
+
+#endif
+// IN_DOXYGEN
 
 } // namespace meta
 
