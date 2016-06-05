@@ -5,6 +5,7 @@
 #ifndef METAENGINE_DATA_HPP_
 #define METAENGINE_DATA_HPP_
 
+#include <chaoscore/base/Exceptions.hpp>
 #include <chaoscore/base/introspect/IntrospectOperations.hpp>
 #include <chaoscore/io/sys/Path.hpp>
 
