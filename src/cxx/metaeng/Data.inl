@@ -5,11 +5,12 @@
 #ifndef METAENGINE_DATA_INL_
 #define METAENGINE_DATA_INL_
 
-#include "meta/Data.hpp"
+#include "metaeng/Data.hpp"
 
+#include <chaoscore/base/Exceptions.hpp>
 #include <chaoscore/io/sys/Path.hpp>
 
-namespace meta
+namespace metaeng
 {
 
 // hide from doxygen

@@ -4,11 +4,11 @@
 #include <chaoscore/base/Exceptions.hpp>
 #include <chaoscore/io/sys/FileReader.hpp>
 
-#define META_FROM_SOURCE
-#include "meta/Data.hpp"
-#undef META_FROM_SOURCE
+#define METAENG_FROM_SOURCE
+#include "metaeng/Data.hpp"
+#undef METAENG_FROM_SOURCE
 
-namespace meta
+namespace metaeng
 {
 
 //------------------------------------------------------------------------------
@@ -245,4 +245,4 @@ void Data::path_expansion(
     }
 }
 
-} // namespace meta
+} // namespace metaeng

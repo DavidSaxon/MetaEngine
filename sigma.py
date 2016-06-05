@@ -118,7 +118,8 @@ if mode == 'all' or mode == 'deploy':
             os.makedirs( current_dir + '/' + d )
         # copy files
         for f in files:
-            if not f.startswith( '__' ) and f.endswith( '.hpp' ):
+            if not f.startswith('__') and
+               (f.endswith('.hpp') or f.endswith('.inl')):
                 shutil.copy( root + '/' + f, current_dir )
 
     # create a meta file with the version number

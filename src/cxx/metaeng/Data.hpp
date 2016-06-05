@@ -10,7 +10,7 @@
 
 #include <json/json.h>
 
-namespace meta
+namespace metaeng
 {
 
 //------------------------------------------------------------------------------
@@ -19,11 +19,11 @@ namespace meta
 
 /*!
  * \brief Determines whether a warning should be printed to ```std::cerr``` if a
- *        meta::Data object fails to load data from a file path and instead
+ *        metaeng::Data object fails to load data from a file path and instead
  *        fallbacks to loading from memory.
  *
  * \note This value can be set at compile time by defining
- *       ```META_WARN_ON_FALLBACK```.
+ *       ```METAENG_WARN_ON_FALLBACK```.
  */
 extern bool warn_on_fallback;
 
@@ -76,7 +76,7 @@ public:
      * given file path. If loading from the file path files the JSON will be
      * read from the memory address instead.
      *
-     * \note If meta::warn_on_fallback is ```true``` then a warning will be
+     * \note If metaeng::warn_on_fallback is ```true``` then a warning will be
      *       printed to ```std::cerr``` if loading from the file path fails.
      *
      * \param path File path to a JSON file to load data from.
@@ -245,24 +245,24 @@ private:
             std::vector<chaos::str::UTF8String> traversed_keys) const;
 };
 
-} // namespace meta
+} // namespace metaeng
 
 #endif
 // METAENGINE_DATA_HPP_
 
 
 // The following code is used to set the warn_on_fallback if
-// META_WARN_ON_FALLBACK is defined and this is the first time this file has
+// METAENG_WARN_ON_FALLBACK is defined and this is the first time this file has
 // been included from a non MetaEngine source file
 
 // hide from doxygen
 #ifndef IN_DOXYGEN
 
-#ifndef META_FROM_SOURCE
+#ifndef METAENG_FROM_SOURCE
 #ifndef METAENGINE_DATA_HPP_POST_
 #define METAENGINE_DATA_HPP_POST_
 
-namespace meta
+namespace metaeng
 {
 
 struct WarnOnFallbackSetter
@@ -273,21 +273,22 @@ struct WarnOnFallbackSetter
     }
 };
 
-#ifdef META_WARN_ON_FALLBACK
+#ifdef METAENG_WARN_ON_FALLBACK
     static WarnOnFallbackSetter warn_on_fallback_setter(true);
 #else
     static WarnOnFallbackSetter warn_on_fallback_setter(false);
 #endif
 
-} // namespace meta
+} // namespace metaeng
 
 #endif
 // METAENGINE_DATA_HPP_POST_
+#include "metaeng/Data.inl"
+
 #endif
-// META_FROM_SOURCE
+// METAENG_FROM_SOURCE
 
 #endif
 // IN_DOXYGEN
 
 
-#include "meta/Data.inl"

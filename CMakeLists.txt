@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
-project(ChaosCore)
+project(MetaEngine)
 
 set(LIB_SRC
 	ext/jsoncpp/jsoncpp.cpp
 
-	src/cxx/meta/Data.cpp
+	src/cxx/metaeng/Data.cpp
 )
 
 set(TESTS_SUITES

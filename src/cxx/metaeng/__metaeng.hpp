@@ -38,14 +38,14 @@
  * stored in the following file relative to the runtime:
  * ```meta/resources.json```
  *
- * Loading and storing the data is done by constructing a meta::Data object:
+ * Loading and storing the data is done by constructing a metaeng::Data object:
  *
  * \code
- * meta::Data meta_resources(
+ * metaeng::Data meta_resources(
  *    chaos::io::sys::Path().join("meta").join("resources.json"));
  * \endcode
  *
- * To access the data the meta::Data::get() function is used.
+ * To access the data the metaeng::Data::get() function is used.
  *
  * \code
  * std::vector<chaos::str::UTF8String> resource_path;
@@ -56,7 +56,7 @@
  * Data values can be retrieved as defined types which may vary the way the
  * value is retrieved. For example MetaEngine supplies a template specialisation
  * for chaos::io::sys::Path objects, where the JSON value is expected to be a
- * string array: meta::Data::get<chaos::io::sys::Path>().
+ * string array: metaeng::Data::get<chaos::io::sys::Path>().
  * Retrieving the value as a chaos::io::sys::Path applies value expansion, which
  * means keys to other valid path values can be used in the data and will be
  * resolved when retrieved, e.g. ```"{$resource_path}"```
@@ -94,8 +94,8 @@
  * \endcode
  *
  * Support for retrieving values as custom types can be added by defining
- * template specialisations for the meta::Data::get() function or for the
- * meta::Data::is_type() and meta::Data::as_type() functions.
+ * template specialisations for the metaeng::Data::get() function or for the
+ * metaeng::Data::is_type() and metaeng::Data::as_type() functions.
  */
 
 /**
