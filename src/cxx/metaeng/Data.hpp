@@ -8,7 +8,14 @@
 #include <chaoscore/base/introspect/IntrospectOperations.hpp>
 #include <chaoscore/io/sys/Path.hpp>
 
-#include <json/json.h>
+//------------------------------------------------------------------------------
+//                              FORWARD DECLARATIONS
+//------------------------------------------------------------------------------
+
+namespace json
+{
+class Value;
+} // namespace json
 
 namespace metaeng
 {
@@ -132,7 +139,25 @@ public:
      *                              ValueType.
      */
     template<typename ValueType>
-    ValueType& get(const chaos::str::UTF8String& key, ValueType& value) const;
+    ValueType& get(const chaos::str::UTF8String& key, ValueType& value) const
+    {
+        // get the JSON value
+        const Json::Value* j_value = resolve_key(key);
+
+        // check if the conversion is possible
+        if(!is_type<ValueType>(j_value))
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "Unable to convert value for key: \"" << key << "\" "
+                          << "to a value of type: <"
+                          << chaos::introspect::get_typename<ValueType>() << ">";
+            throw chaos::ex::TypeError(error_message);
+        }
+
+        // perform the conversion and return
+        as_type<ValueType>(j_value, value);
+        return value;
+    }
 
     /*!
      * \brief Attempts to retrieve an array value from the internal data as a
@@ -143,7 +168,51 @@ public:
     template<typename ValueType>
     std::vector<ValueType>& get(
             const chaos::str::UTF8String& key,
-            std::vector<ValueType>& value) const;
+            std::vector<ValueType>& value) const
+    {
+        // temporary vector
+        std::vector<ValueType> temp;
+        // get the JSON value
+        const Json::Value* j_array = resolve_key(key);
+        bool can_convert = true;
+        // check that we have a list first
+        if(!j_array->isArray())
+        {
+            can_convert = false;
+        }
+        // check and get each value
+        else
+        {
+            Json::Value::const_iterator j_value;
+            for(j_value = j_array->begin(); j_value != j_array->end(); ++j_value)
+            {
+                // check if the value can be converted
+                if(!is_type<ValueType>(&(*j_value)))
+                {
+                    can_convert = false;
+                    break;
+                }
+                // perform the conversion
+                ValueType element;
+                as_type<ValueType>(&(*j_value), element);
+                temp.push_back(element);
+            }
+        }
+
+        // throw if the conversion cannot be done
+        if(!can_convert)
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "Unable to convert value for key: \"" << key << "\" "
+                          << "to a value of type: <std::vector<"
+                          << chaos::introspect::get_typename<ValueType>() << ">>";
+            throw chaos::ex::TypeError(error_message);
+        }
+
+        // copy temporary and return
+        value = temp;
+        return value;
+    }
 
 protected:
 
@@ -245,11 +314,183 @@ private:
             std::vector<chaos::str::UTF8String> traversed_keys) const;
 };
 
+//------------------------------------------------------------------------------
+//                            TEMPLATE SPECIALISATIONS
+//------------------------------------------------------------------------------
+
+/*!
+ * \brief Attempts to retrieve a chaos::io::sys::Path from internal data using
+ *        the key.
+ *
+ * See data::get().
+ *
+ * Paths should be defined in the JSON file as an array of strings:
+ *
+ * \code
+ * "path_1": ["/", "path", "to", "location"]
+ * \endcode
+ *
+ * Retrieving this value would provide the following path:
+ * ```/path/to/location```.
+ *
+ * Paths also support expansion of other values using the ```${key}``` syntax.
+ * For example:
+ *
+ * \code
+ * "path_2": ["${path_1}", sub", "folder"]
+ * \endcode
+ *
+ * Would be retrieved as: ```/path/to/location/sub/folder```.
+ *
+ * \throws chaos::ex::KeyError If the key does not exist in the data.
+ * \throws chaos::ex::TypeError If the value cannot be parsed as a
+ *                              chaos::io::sys::Path.
+ * \throws chaos::ex::RuntimeError If the a cyclic expansion is detected (i.e.
+ *                                 path_1 references path_2 but path_2
+ *                                 references path_1).
+ */
+template<>
+chaos::io::sys::Path& Data::get(
+        const chaos::str::UTF8String& key,
+        chaos::io::sys::Path& value) const;
+
+//------------------------------------------------------------------------------
+
+// hide from doxygen
+#ifndef IN_DOXYGEN
+
+//-------------------------------------BOOL-------------------------------------
+
+template <>
+bool Data::is_type<bool>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<bool>(const Json::Value* value, bool& ret) const;
+
+//-------------------------------------INT8-------------------------------------
+
+template <>
+bool Data::is_type<chaos::int8>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::int8>(
+        const Json::Value* value,
+        chaos::int8& ret) const;
+
+//------------------------------------UINT8-------------------------------------
+
+template <>
+bool Data::is_type<chaos::uint8>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::uint8>(
+        const Json::Value* value,
+        chaos::uint8& ret) const;
+
+//------------------------------------INT16-------------------------------------
+
+template <>
+bool Data::is_type<chaos::int16>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::int16>(
+        const Json::Value* value,
+        chaos::int16& ret) const;
+
+//------------------------------------UINT16------------------------------------
+
+template <>
+bool Data::is_type<chaos::uint16>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::uint16>(
+        const Json::Value* value,
+        chaos::uint16& ret) const;
+
+//------------------------------------INT32-------------------------------------
+
+template <>
+bool Data::is_type<chaos::int32>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::int32>(
+        const Json::Value* value,
+        chaos::int32& ret) const;
+
+//------------------------------------UINT32------------------------------------
+
+template <>
+bool Data::is_type<chaos::uint32>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::uint32>(
+        const Json::Value* value,
+        chaos::uint32& ret) const;
+
+//------------------------------------INT64-------------------------------------
+
+template <>
+bool Data::is_type<chaos::int64>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::int64>(
+        const Json::Value* value,
+        chaos::int64& ret) const;
+
+//------------------------------------UINT64------------------------------------
+
+template <>
+bool Data::is_type<chaos::uint64>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::uint64>(
+        const Json::Value* value,
+        chaos::uint64& ret) const;
+
+//------------------------------------FLOAT-------------------------------------
+
+template <>
+bool Data::is_type<float>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<float>(
+        const Json::Value* value,
+        float& ret) const;
+
+//------------------------------------DOUBLE------------------------------------
+
+template <>
+bool Data::is_type<double>(const Json::Value* value) const;
+
+template<>
+void Data::as_type<double>(
+        const Json::Value* value,
+        double& ret) const;
+
+//----------------------------------UTF8STRING----------------------------------
+
+template <>
+bool Data::is_type<chaos::str::UTF8String>(
+        const Json::Value* value) const;
+
+template<>
+void Data::as_type<chaos::str::UTF8String>(
+        const Json::Value* value,
+        chaos::str::UTF8String& ret) const;
+
+#endif
+// IN_DOXYGEN
+
+//------------------------------------------------------------------------------
+
 } // namespace metaeng
 
 #endif
 // METAENGINE_DATA_HPP_
 
+//------------------------------------------------------------------------------
+//                                POST DEFINITIONS
+//------------------------------------------------------------------------------
 
 // The following code is used to set the warn_on_fallback if
 // METAENG_WARN_ON_FALLBACK is defined and this is the first time this file has
@@ -283,8 +524,6 @@ struct WarnOnFallbackSetter
 
 #endif
 // METAENGINE_DATA_HPP_POST_
-#include "metaeng/Data.inl"
-
 #endif
 // METAENG_FROM_SOURCE
 

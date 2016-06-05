@@ -4,6 +4,8 @@
 #include <chaoscore/base/Exceptions.hpp>
 #include <chaoscore/io/sys/FileReader.hpp>
 
+#include <json/json.h>
+
 #define METAENG_FROM_SOURCE
 #include "metaeng/Data.hpp"
 #undef METAENG_FROM_SOURCE
@@ -24,9 +26,7 @@ bool warn_on_fallback = false;
 Data::Data(const chaos::io::sys::Path& path)
     :
     m_using_path(true),
-    m_path      (path),
-    m_mem       (nullptr),
-    m_root      (nullptr)
+    m_path      (path),    m_root      (nullptr)
 {
     reload();
 }
@@ -115,6 +115,8 @@ void Data::reload()
         parse_str(*m_mem, true);
     }
 }
+
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //                           PROTECTED MEMBER FUNCTIONS
@@ -243,6 +245,249 @@ void Data::path_expansion(
             elements.push_back(*expanded_element);
         }
     }
+}
+
+//------------------------------------------------------------------------------
+//                            TEMPLATE SPECIALISATIONS
+//------------------------------------------------------------------------------
+
+//-------------------------------------PATH-------------------------------------
+
+template<>
+chaos::io::sys::Path& Data::get(
+        const chaos::str::UTF8String& key,
+        chaos::io::sys::Path& value) const
+{
+    // check cache first
+    std::map<chaos::str::UTF8String, chaos::io::sys::Path>::const_iterator
+        cached = m_path_cache.find(key);
+    if(cached != m_path_cache.end())
+    {
+        // assign from cache entry
+        value = cached->second;
+    }
+    else
+    {
+        // attempt to read the value as a string list
+        std::vector<chaos::str::UTF8String> path_elements;
+        // catch any errors and rethrow
+        try
+        {
+            get(key, path_elements);
+        }
+        catch(chaos::ex::TypeError)
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "Unable to convert value for key: \"" << key
+                          << "\" to a value of type: <chaos::io::sys::Path>. A "
+                          << "list of strings was expected but not found.";
+            throw chaos::ex::TypeError(error_message);
+        }
+
+        // expand the list that was retrieved
+        std::vector<chaos::str::UTF8String> traversed_keys;
+        traversed_keys.push_back(key);
+        path_expansion(path_elements, traversed_keys);
+
+        // cache the path
+        m_path_cache[key] = chaos::io::sys::Path(path_elements);
+
+        // assign from new cache entry
+        value = m_path_cache[key];
+    }
+
+    return value;
+}
+
+//-------------------------------------BOOL-------------------------------------
+
+template <>
+bool Data::is_type<bool>(const Json::Value* value) const
+{
+    return value->isBool();
+}
+
+template<>
+void Data::as_type<bool>(const Json::Value* value, bool& ret) const
+{
+    ret = value->asBool();
+}
+
+//-------------------------------------INT8-------------------------------------
+
+template <>
+bool Data::is_type<chaos::int8>(const Json::Value* value) const
+{
+    return value->isInt();
+}
+
+template<>
+void Data::as_type<chaos::int8>(
+        const Json::Value* value,
+        chaos::int8& ret) const
+{
+    ret = static_cast<chaos::int8>(value->asInt());
+}
+
+//------------------------------------UINT8-------------------------------------
+
+template <>
+bool Data::is_type<chaos::uint8>(const Json::Value* value) const
+{
+    return value->isUInt();
+}
+
+template<>
+void Data::as_type<chaos::uint8>(
+        const Json::Value* value,
+        chaos::uint8& ret) const
+{
+    ret = static_cast<chaos::uint8>(value->asUInt());
+}
+
+//------------------------------------INT16-------------------------------------
+
+template <>
+bool Data::is_type<chaos::int16>(const Json::Value* value) const
+{
+    return value->isInt();
+}
+
+template<>
+void Data::as_type<chaos::int16>(
+        const Json::Value* value,
+        chaos::int16& ret) const
+{
+    ret = static_cast<chaos::int16>(value->asInt());
+}
+
+//------------------------------------UINT16------------------------------------
+
+template <>
+bool Data::is_type<chaos::uint16>(const Json::Value* value) const
+{
+    return value->isUInt();
+}
+
+template<>
+void Data::as_type<chaos::uint16>(
+        const Json::Value* value,
+        chaos::uint16& ret) const
+{
+    ret = static_cast<chaos::uint16>(value->asUInt());
+}
+
+//------------------------------------INT32-------------------------------------
+
+template <>
+bool Data::is_type<chaos::int32>(const Json::Value* value) const
+{
+    return value->isInt();
+}
+
+template<>
+void Data::as_type<chaos::int32>(
+        const Json::Value* value,
+        chaos::int32& ret) const
+{
+    ret = static_cast<chaos::int32>(value->asInt());
+}
+
+//------------------------------------UINT32------------------------------------
+
+template <>
+bool Data::is_type<chaos::uint32>(const Json::Value* value) const
+{
+    return value->isUInt();
+}
+
+template<>
+void Data::as_type<chaos::uint32>(
+        const Json::Value* value,
+        chaos::uint32& ret) const
+{
+    ret = static_cast<chaos::uint32>(value->asUInt());
+}
+
+//------------------------------------INT64-------------------------------------
+
+template <>
+bool Data::is_type<chaos::int64>(const Json::Value* value) const
+{
+    return value->isInt();
+}
+
+template<>
+void Data::as_type<chaos::int64>(
+        const Json::Value* value,
+        chaos::int64& ret) const
+{
+    ret = static_cast<chaos::int64>(value->asInt64());
+}
+
+//------------------------------------UINT64------------------------------------
+
+template <>
+bool Data::is_type<chaos::uint64>(const Json::Value* value) const
+{
+    return value->isUInt();
+}
+
+template<>
+void Data::as_type<chaos::uint64>(
+        const Json::Value* value,
+        chaos::uint64& ret) const
+{
+    ret = static_cast<chaos::uint64>(value->asUInt64());
+}
+
+//------------------------------------FLOAT-------------------------------------
+
+template <>
+bool Data::is_type<float>(const Json::Value* value) const
+{
+    return value->isDouble();
+}
+
+template<>
+void Data::as_type<float>(
+        const Json::Value* value,
+        float& ret) const
+{
+    ret = value->asFloat();
+}
+
+//------------------------------------DOUBLE------------------------------------
+
+template <>
+bool Data::is_type<double>(const Json::Value* value) const
+{
+    return value->isDouble();
+}
+
+template<>
+void Data::as_type<double>(
+        const Json::Value* value,
+        double& ret) const
+{
+    ret = value->asDouble();
+}
+
+//----------------------------------UTF8STRING----------------------------------
+
+template <>
+bool Data::is_type<chaos::str::UTF8String>(
+        const Json::Value* value) const
+{
+    return value->isString();
+}
+
+template<>
+void Data::as_type<chaos::str::UTF8String>(
+        const Json::Value* value,
+        chaos::str::UTF8String& ret) const
+{
+    ret.assign(value->asCString());
 }
 
 } // namespace metaeng
