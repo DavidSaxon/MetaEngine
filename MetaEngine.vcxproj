@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Lib'">
     <ClCompile Include="ext\jsoncpp\jsoncpp.cpp" />
-    <ClCompile Include="src\cxx\meta\Data.cpp" />
+    <ClCompile Include="src\cxx\metaeng\Data.cpp" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='tests'">
     <ClCompile Include="tests\cxx\TestsMain.cpp" />
