@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 project(MetaEngine)
 
 set(LIB_SRC
-	ext/jsoncpp/jsoncpp.cpp
+	src/cxx/json/jsoncpp.cpp
 
 	src/cxx/metaeng/Data.cpp
 )
@@ -21,7 +21,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++0x -Wall -Wno-varargs")
 include_directories(
 	${INCLUDE_DIRECTORIES}
 	${CMAKE_BINARY_DIR}/ext/ChaosCore/include/
-	${CMAKE_BINARY_DIR}/ext/jsoncpp/
 	src/cxx/
 	tests/cxx/
 )

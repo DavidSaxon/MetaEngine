@@ -8,14 +8,7 @@
 #include <chaoscore/base/introspect/IntrospectOperations.hpp>
 #include <chaoscore/io/sys/Path.hpp>
 
-//------------------------------------------------------------------------------
-//                              FORWARD DECLARATIONS
-//------------------------------------------------------------------------------
-
-namespace json
-{
-class Value;
-} // namespace json
+#include <json/json.h>
 
 namespace metaeng
 {

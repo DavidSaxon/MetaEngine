@@ -4,8 +4,6 @@
 #include <chaoscore/base/Exceptions.hpp>
 #include <chaoscore/io/sys/FileReader.hpp>
 
-#include <json/json.h>
-
 #define METAENG_FROM_SOURCE
 #include "metaeng/Data.hpp"
 #undef METAENG_FROM_SOURCE
