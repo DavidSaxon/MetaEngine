@@ -293,6 +293,24 @@ public:
 };
 
 //------------------------------------------------------------------------------
+//                                VALIDATION ERROR
+//------------------------------------------------------------------------------
+
+/*!
+ * \brief Warns that a data validation check has failed.
+ */
+class ValidationError : public ChaosException
+{
+public:
+
+    ValidationError(const chaos::str::UTF8String& message)
+        :
+        ChaosException("ValidationError", message)
+    {
+    }
+};
+
+//------------------------------------------------------------------------------
 //                                  PARSE ERROR
 //------------------------------------------------------------------------------
 

@@ -50,12 +50,18 @@ public:
      * file path.
      *
      * \param path File path to a JSON file to load data from.
+     * \param schema JSON data the denotes the layout the input data is expected
+     *               to match. If an empty string is provided, schema validation
+     *               is not preformed.
      *
      * \throws chaos::ex::InvalidPathError If the path cannot be accessed.
-     * \throws chaos::ex::ParseError If the file contents cannot be parsed as
-     *                               JSON.
+     * \throws chaos::ex::ParseError If the file contents or the schema cannot
+     *                               be parsed as JSON.
+     * TODO: throw validation error
      */
-    Data(const chaos::io::sys::Path& path);
+    Data(
+            const chaos::io::sys::Path& path,
+            const chaos::str::UTF8String& schema = chaos::str::UTF8String());
 
     /*!
      * \brief Memory constructor.
@@ -65,10 +71,17 @@ public:
      *
      * \param mem Pointer to a chaos::str::UTF8String that contains the JSON to
      *            read from.
+     * \param schema JSON data the denotes the layout the input data is expected
+     *               to match. If an empty string is provided, schema validation
+     *               is not preformed.
      *
-     * \throws chaos::ex::ParseError If the memory cannot be parsed as JSON.
+     * \throws chaos::ex::ParseError If the memory or the schema cannot be
+     *                               parsed as JSON.
+     * TODO: throw validation error
      */
-    Data(const chaos::str::UTF8String* const mem);
+    Data(
+            const chaos::str::UTF8String* const mem,
+            const chaos::str::UTF8String& schema = chaos::str::UTF8String());
 
     /*!
      * \brief Fallback constructor.
@@ -83,13 +96,19 @@ public:
      * \param path File path to a JSON file to load data from.
      * \param mem Pointer to a chaos::str::UTF8String that contains JSON to read
      *            from if reading from the file fails.
+     * \param schema JSON data the denotes the layout the input data is expected
+     *               to match. If an empty string is provided, schema validation
+     *               is not preformed.
      *
      * \throws chaos::ex::ParseError If the file cannot be loaded, and the
-     *                               memory cannot be parsed as JSON.
+     *                               memory or the schema cannot be parsed as
+     *                               JSON.
+     * TODO: throw validation error
      */
     Data(
             const chaos::io::sys::Path& path,
-            const chaos::str::UTF8String* const mem);
+            const chaos::str::UTF8String* const mem,
+            const chaos::str::UTF8String& schema = chaos::str::UTF8String());
 
     //--------------------------------------------------------------------------
     //                          PUBLIC MEMBER FUNCTIONS
@@ -142,9 +161,10 @@ public:
         if(!is_type<ValueType>(j_value))
         {
             chaos::str::UTF8String error_message;
-            error_message << "Unable to convert value for key: \"" << key << "\" "
-                          << "to a value of type: <"
-                          << chaos::introspect::get_typename<ValueType>() << ">";
+            error_message << "Unable to convert value for key: \"" << key
+                          << "\" to a value of type: <"
+                          << chaos::introspect::get_typename<ValueType>()
+                          << ">";
             throw chaos::ex::TypeError(error_message);
         }
 
@@ -178,7 +198,10 @@ public:
         else
         {
             Json::Value::const_iterator j_value;
-            for(j_value = j_array->begin(); j_value != j_array->end(); ++j_value)
+            for(
+                j_value = j_array->begin();
+                j_value != j_array->end();
+                ++j_value)
             {
                 // check if the value can be converted
                 if(!is_type<ValueType>(&(*j_value)))
@@ -197,9 +220,10 @@ public:
         if(!can_convert)
         {
             chaos::str::UTF8String error_message;
-            error_message << "Unable to convert value for key: \"" << key << "\" "
-                          << "to a value of type: <std::vector<"
-                          << chaos::introspect::get_typename<ValueType>() << ">>";
+            error_message << "Unable to convert value for key: \"" << key
+                          << "\" to a value of type: <std::vector<"
+                          << chaos::introspect::get_typename<ValueType>()
+                          << ">>";
             throw chaos::ex::TypeError(error_message);
         }
 
@@ -267,6 +291,12 @@ private:
     const chaos::str::UTF8String* m_mem;
 
     /*!
+     * \brief Schema that is used to check whether the input data is valid or
+     *        not.
+     */
+    chaos::str::UTF8String m_schema;
+
+    /*!
      * \brief The root Json Value hold the internal data.
      */
     std::unique_ptr<Json::Value> m_root;
@@ -289,6 +319,20 @@ private:
      *                         fails.
      */
     void parse_str(const chaos::str::UTF8String& str, bool throw_on_failure);
+
+    /*!
+     * \brief Recursively checks whether the values of the schema are within
+     *        loaded JSON data.
+     *
+     * \param schema_root the root JSON node of the schema to check against.
+     * \param data_root the root JSON node of the data to check against.
+     *
+     * \throws chaos::ex::ValidationError If a schema mismatch is found.
+     */
+    void check_schema(
+            const Json::Value* schema_root,
+            const Json::Value* data_root,
+            const chaos::str::UTF8String& parent_key);
 
     /*!
      * \brief Replaces any elements of the given list that have expansion syntax

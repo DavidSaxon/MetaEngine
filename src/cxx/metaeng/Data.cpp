@@ -21,18 +21,26 @@ bool warn_on_fallback = false;
 //                                  CONSTRUCTORS
 //------------------------------------------------------------------------------
 
-Data::Data(const chaos::io::sys::Path& path)
+Data::Data(
+        const chaos::io::sys::Path& path,
+        const chaos::str::UTF8String& schema)
     :
     m_using_path(true),
-    m_path      (path),    m_root      (nullptr)
+    m_path      (path),
+    m_mem       (nullptr),
+    m_schema    (schema),
+    m_root      (nullptr)
 {
     reload();
 }
 
-Data::Data(const chaos::str::UTF8String* const mem)
+Data::Data(
+        const chaos::str::UTF8String* const mem,
+        const chaos::str::UTF8String& schema)
     :
     m_using_path(false),
     m_mem       (mem),
+    m_schema    (schema),
     m_root      (nullptr)
 {
     reload();
@@ -40,11 +48,13 @@ Data::Data(const chaos::str::UTF8String* const mem)
 
 Data::Data(
         const chaos::io::sys::Path& path,
-        const chaos::str::UTF8String* const mem)
+        const chaos::str::UTF8String* const mem,
+        const chaos::str::UTF8String& schema)
     :
     m_using_path(true),
     m_path      (path),
     m_mem       (mem),
+    m_schema    (schema),
     m_root      (nullptr)
 {
     reload();
@@ -90,10 +100,9 @@ void Data::reload()
             {
                 throw exc;
             }
-            // print an warning?
+            // print a warning?
             else if(warn_on_fallback)
             {
-                // print a warning
                 std::cerr << "MetaEngine: Failed to open and read from file: \""
                           << m_path.to_native() << "\" Failing back to reading "
                           << "data from memory." << std::endl;
@@ -154,6 +163,28 @@ void Data::parse_str(const chaos::str::UTF8String& str, bool throw_on_failure)
     // clear the current value
     m_root.reset(new Json::Value());
 
+    // has a schema been provided?
+    std::unique_ptr<Json::Value> schema_root(new Json::Value());
+    if(!m_schema.is_empty())
+    {
+        // parse the schema first
+        Json::Reader reader;
+        bool parse_sucess = reader.parse(
+            m_schema.get_raw(),
+            m_schema.get_raw() + (m_schema.get_byte_length() - 1),
+            *schema_root
+        );
+        // failed to parse schema?
+        if(!parse_sucess)
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "Failed to parse JSON from schema data: \""
+                          << m_schema << "\" with message:\n"
+                          << reader.getFormattedErrorMessages();
+            throw chaos::ex::ParseError(error_message);
+        }
+    }
+
     // parse the Json
     Json::Reader reader;
     bool parse_sucess = reader.parse(
@@ -183,6 +214,150 @@ void Data::parse_str(const chaos::str::UTF8String& str, bool throw_on_failure)
                       << m_path.to_native() << "\" with message:\n"
                       << reader.getFormattedErrorMessages() << "\nFalling "
                       << "back to reading data from memory." << std::endl;
+        }
+    }
+
+    // check against the schema
+    if(schema_root != nullptr)
+    {
+        try
+        {
+            check_schema(schema_root.get(), m_root.get(), "");
+        }
+        catch(const chaos::ex::ValidationError& exc)
+        {
+            // clean up
+            m_root.reset();
+            // re-throw
+            if(throw_on_failure)
+            {
+                throw exc;
+            }
+            // fallback
+            else if(warn_on_fallback)
+            {
+                // print warning
+                std::cerr << "MetaEngine: Failed to valid JSON data from "
+                          << "file: \"" << m_path.to_native() << "\" with "
+                          << "error: \"" << exc.what() << "\"\nFalling back to "
+                          << "reading data from memory." << std::endl;
+            }
+        }
+    }
+}
+
+void Data::check_schema(
+        const Json::Value* schema_root,
+        const Json::Value* data_root,
+        const chaos::str::UTF8String& parent_key)
+{
+    // get the names of the members from both the schema and the data
+    std::vector<std::string> schema_members(schema_root->getMemberNames());
+    std::vector<std::string> data_members(data_root->getMemberNames());
+    // check that every member in the schema is in the data
+    CHAOS_CONST_FOR_EACH(schema_member, schema_members)
+    {
+        chaos::str::UTF8String current_key(parent_key);
+        if(!current_key.is_empty())
+        {
+            current_key += ".";
+        }
+        current_key += schema_member->c_str();
+
+        std::vector<std::string>::iterator member_match =
+            std::find(data_members.begin(), data_members.end(), *schema_member);
+        if(member_match == data_members.end())
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "Failed to validate against schema, the key \""
+                          << current_key << "\" is not present in the "
+                          << "data.";
+            throw chaos::ex::ValidationError(error_message);
+        }
+
+        // get the schema and data values
+        const Json::Value schema_value(
+                schema_root->get(*schema_member, Json::Value()));
+        const Json::Value data_value(
+                data_root->get(*schema_member, Json::Value()));
+
+        // check whether the type matches
+        bool type_mismatch = false;
+        chaos::str::UTF8String expected_type;
+        // null
+        if(schema_value.isNull())
+        {
+            // no need to check the schema
+            continue;
+        }
+        // hierarchy
+        else if(schema_value.isObject())
+        {
+            if(!data_value.isObject())
+            {
+                type_mismatch = true;
+                expected_type = "hierarchy";
+            }
+            else
+            {
+                // types match, but we need to traverse the hierarchy further
+                check_schema(&schema_value, &data_value, current_key);
+            }
+        }
+        // bool
+        else if(schema_value.isBool() && !data_value.isBool())
+        {
+            type_mismatch = true;
+            expected_type = "bool";
+        }
+        // int
+        else if(schema_value.isIntegral() && !data_value.isIntegral())
+        {
+            type_mismatch = true;
+            expected_type = "int";
+        }
+        // float
+        else if(schema_value.isDouble() && !data_value.isDouble())
+        {
+            type_mismatch = true;
+            expected_type = "float";
+        }
+        // string
+        else if(schema_value.isString() && !data_value.isString())
+        {
+            type_mismatch = true;
+            expected_type = "string";
+        }
+        // array
+        else if(schema_value.isArray())
+        {
+            // check that both are arrays
+            if(!data_value.isArray())
+            {
+                type_mismatch = true;
+                expected_type = "array";
+            }
+            // check the arrays have the same size
+            if(schema_value.size() != data_value.size())
+            {
+                chaos::str::UTF8String error_message;
+                error_message << "Failed to validate against schema, the value "
+                              << "for the key \"" << current_key << "\" does "
+                              << "not match the expected size in the schema: "
+                              << schema_value.size();
+                throw chaos::ex::ValidationError(error_message);
+            }
+        }
+
+        // was there a type mismatch
+        if(type_mismatch)
+        {
+            chaos::str::UTF8String error_message;
+            error_message << "Failed to validate against schema, the value for "
+                          << "the key \"" << current_key << "\" does not "
+                          << "match the expected type in the schema: "
+                          << expected_type;
+            throw chaos::ex::ValidationError(error_message);
         }
     }
 }

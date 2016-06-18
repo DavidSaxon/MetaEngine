@@ -101,7 +101,7 @@
 /**
   * \brief the global namespace for the MetaEngine API.
   */
-namespace meta
+namespace metaeng
 {
 } // namespace chaos
 

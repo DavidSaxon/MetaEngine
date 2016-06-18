@@ -18,9 +18,10 @@ CHAOS_TEST_UNIT(constructor)
 {
     chaos::str::UTF8String fallback(
         "{"
-            "\"resource_path\": \"res\","
-            "\"gui_resource_path\": \"{resource_path}/gui\","
-            "\"fonts_resource_path\": \"{gui_resource_path}/fonts\","
+            "\"first_error\": 3.14,"
+            "\"resource_path\": [\"res\"],"
+            "\"gui_resource_path\": [\"${resource_path}\", \"gui\"],"
+            "\"fonts_resource_path\": [\"${gui_resource_path}\", \"fonts\"],"
             "\"fonts\":"
             "{"
             "    \"supported_formats\": [\"ttf\", \"otf\"]"
@@ -35,7 +36,7 @@ CHAOS_TEST_UNIT(constructor)
     meta_path << "tests" << "meta" << "sub_1" << "test_data_2.json";
 
     // metaeng::Data data(meta_path);
-    metaeng::Data data(meta_path, &fallback);
+    metaeng::Data data(meta_path, fallback);
 
     // chaos::uint8 remove_me;
     // remove_me = data.get("remove_me", remove_me);
