@@ -6,5 +6,6 @@
     "fonts":
     {
         "supported_formats": ["ttf", "otf"]
-    }
+    },
+    "bool_test": true
 }

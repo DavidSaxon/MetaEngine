@@ -14,6 +14,8 @@ namespace
 
 // TODO: fixture?
 
+// bool
+
 CHAOS_TEST_UNIT(constructor)
 {
     chaos::str::UTF8String fallback(
@@ -51,9 +53,13 @@ CHAOS_TEST_UNIT(constructor)
     // resource_path_v = data.get("resource_path", resource_path_v);
     // CHAOS_PRINT_ITERABLE(resource_path_v);
 
-    chaos::io::sys::Path resource_path;
-    data.get("fonts_resource_path", resource_path);
-    std::cout << "resource_path: " << resource_path.to_native() << std::endl;
+    // chaos::io::sys::Path resource_path;
+    // data.get("fonts_resource_path", resource_path);
+    // std::cout << "resource_path: " << resource_path.to_native() << std::endl;
+
+    // bool test = bool();
+    bool test = data.get("bool_test", test);
+    std::cout << "test: " << test << std::endl;
 }
 
 } // namespace

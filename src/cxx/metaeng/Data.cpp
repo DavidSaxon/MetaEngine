@@ -93,12 +93,12 @@ void Data::reload()
             json_file.close();
             read_success = true;
         }
-        catch(const std::exception& exc)
+        catch(...)
         {
             // no fallback plan, just re-throw
             if(m_mem == nullptr)
             {
-                throw exc;
+                throw;
             }
             // print a warning?
             else if(warn_on_fallback)

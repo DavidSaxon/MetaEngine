@@ -152,7 +152,9 @@ public:
      *                              ValueType.
      */
     template<typename ValueType>
-    ValueType& get(const chaos::str::UTF8String& key, ValueType& value) const
+    ValueType& get(
+            const chaos::str::UTF8String& key,
+            ValueType& value) const
     {
         // get the JSON value
         const Json::Value* j_value = resolve_key(key);
