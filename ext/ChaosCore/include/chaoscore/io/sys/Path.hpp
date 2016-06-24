@@ -111,12 +111,6 @@ public:
     Path( const Path& other );
 
     //--------------------------------------------------------------------------
-    //                                 DESTRUCTOR
-    //--------------------------------------------------------------------------
-
-    ~Path();
-
-    //--------------------------------------------------------------------------
     //                                 OPERATORS
     //--------------------------------------------------------------------------
 
@@ -474,11 +468,6 @@ public:
      * \brief List containing each individual component of this path.
      */
     std::vector< chaos::str::UTF8String > m_components;
-
-    /*!
-     * \brief Allocation for the last returned c string path.
-     */
-    mutable char* m_cstring_data;
 };
 
 //------------------------------------------------------------------------------

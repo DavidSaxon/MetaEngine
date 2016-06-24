@@ -317,10 +317,20 @@ public:
      * \return A reference to this UTF8String after the assignment has taken
      *         place.
      *
+     * TODO: shouldn't throw here
      * \throws chaos::ex::EncodingError If the internal data of the provided
      *                                  object is not valid UTF-8 encoded data.
      */
     const UTF8String& operator=(const UTF8String& other);
+
+    /*!
+     * \brief Move assignment operator.
+     *
+     * Moves resources from the given UTF8String to this UTF8String.
+     *
+     * \param other The UTF8String to move resources from.
+     */
+    UTF8String& operator=(UTF8String&& other);
 
     /*!
      * \brief Equality operator.

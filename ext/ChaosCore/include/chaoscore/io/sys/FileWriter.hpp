@@ -103,8 +103,33 @@ public:
     ~FileWriter();
 
     //--------------------------------------------------------------------------
+    //                                 OPERATORS
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief Move assignment operator.
+     *
+     * Moves resources from the given FileWriter to this FileWriter.
+     *
+     * \param other The FileWriter to move resources from.
+     */
+    FileWriter& operator=(FileWriter&& other);
+
+    //--------------------------------------------------------------------------
     //                          PUBLIC MEMBER FUNCTIONS
     //--------------------------------------------------------------------------
+
+    /*!
+     * \brief Returns the open mode of this FileWriter.
+     */
+    OpenMode get_open_mode() const;
+
+    /*!
+     * \brief Sets the open mode of this FileWriter.
+     *
+     * \throws chaos::ex::StateError If this FileHandle is open.
+     */
+    void set_open_mode(OpenMode open_mode);
 
     /*!
      * \brief Opens this FileWriter to the internal path.

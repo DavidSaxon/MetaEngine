@@ -78,8 +78,14 @@ bool is_symbolic_link( const chaos::io::sys::Path& path );
  * the `dir` command on Windows. An empty vector will be returned if the given
  * path does not exist or is .not a directory. This function will not resolve
  * a symbolic link if one is provided as the input path.
+ *
+ * \param path The file path to list sub-paths for.
+ * \param include_special Whether the special symbols "." and ".." while be
+ *                        included with the returned paths.
  */
-std::vector< chaos::io::sys::Path > list( const chaos::io::sys::Path& path );
+std::vector<chaos::io::sys::Path> list(
+        const chaos::io::sys::Path& path,
+        bool include_special = false);
 
 /*!
  * \brief Lists all descendant file system paths located under the given path.
@@ -89,8 +95,9 @@ std::vector< chaos::io::sys::Path > list( const chaos::io::sys::Path& path );
  * function returns all paths that are a descendant of the given path. This
  * function will not resolve symbolics in order to avoid infinite recursion.
  */
-std::vector< chaos::io::sys::Path > list_rec(
-        const chaos::io::sys::Path& path );
+std::vector< chaos::io::sys::Path> list_rec(
+        const chaos::io::sys::Path& path,
+        bool include_special = false);
 
 /*!
  * \brief Attempts to create the directory at the given path.

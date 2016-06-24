@@ -337,16 +337,6 @@ void Data::check_schema(
                 type_mismatch = true;
                 expected_type = "array";
             }
-            // check the arrays have the same size
-            if(schema_value.size() != data_value.size())
-            {
-                chaos::str::UTF8String error_message;
-                error_message << "Failed to validate against schema, the value "
-                              << "for the key \"" << current_key << "\" does "
-                              << "not match the expected size in the schema: "
-                              << schema_value.size();
-                throw chaos::ex::ValidationError(error_message);
-            }
         }
 
         // was there a type mismatch

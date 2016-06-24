@@ -97,6 +97,19 @@ public:
     ~FileReader();
 
     //--------------------------------------------------------------------------
+    //                                 OPERATORS
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief Move assignment operator.
+     *
+     * Moves resources from the given FileReader to this FileReader.
+     *
+     * \param other The FileReader to move resources from.
+     */
+    FileReader& operator=(FileReader&& other);
+
+    //--------------------------------------------------------------------------
     //                          PUBLIC MEMBER FUNCTIONS
     //--------------------------------------------------------------------------
 

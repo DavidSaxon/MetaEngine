@@ -82,6 +82,19 @@ public:
     }
 
     //--------------------------------------------------------------------------
+    //                                 OPERATORS
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief Move assignment operator.
+     *
+     * Moves resources from the given FileHandle to this FileHandle.
+     *
+     * \param other The FileHandle to move resources from.
+     */
+    FileHandle& operator=(FileHandle&& other);
+
+    //--------------------------------------------------------------------------
     //                          PUBLIC MEMBER FUNCTIONS
     //--------------------------------------------------------------------------
 
