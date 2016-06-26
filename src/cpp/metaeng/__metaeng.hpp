@@ -15,7 +15,7 @@
  * MetaEngine is designed for defining program runtime configuration data that
  * can be stored outside of the source code but accessed efficiently at runtime.
  *
- * \par How to Use
+ * \par Example Usage
  *
  * Configuration data is stored in JSON files. For example the following file
  * contains configuration data in relation to application resources:
