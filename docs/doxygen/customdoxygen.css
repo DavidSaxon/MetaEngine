@@ -1194,10 +1194,10 @@ dl.section dd {
 #projectname
 {
     font-family: "Segoe UI Light", 'Source Sans Pro', sans-serif;
-    font-size: 25px;
+    font-size: 40px;
     margin: 0px;
     padding: 2px 0px;
-    color: white;
+    color: #999999;
 }
 
 #projectbrief
@@ -1210,9 +1210,10 @@ dl.section dd {
 #projectnumber
 {
     font-family: "Segoe UI Light", 'Source Sans Pro', sans-serif;
-    font-size: 16px;
+    font-size: 32px;
     margin: 12;
     padding: 0px;
+    color: #999999;
 }
 
 #titlearea
@@ -1221,10 +1222,7 @@ dl.section dd {
     margin: 0px;
     width: 100%;
     border-bottom: none;
-    background: -webkit-linear-gradient(left, #619f6c , #c1c760); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(right, #619f6c, #c1c760); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(right, #619f6c, #c1c760); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(to right, #619f6c , #c1c760); /* Standard syntax */
+    background-color: #ffffff;
 /*    background-image: -webkit-gradient(linear, left, right, from(#eee), to(#000),color-stop(0.3, #444));
     background-image: -moz-linear-gradient(center top, #eee 0%, #444 40%, #000);*/
 }

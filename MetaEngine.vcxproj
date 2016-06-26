@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Lib'">
-    <ClCompile Include="src\cxx\json\jsoncpp.cpp" />
-    <ClCompile Include="src\cxx\metaeng\Data.cpp" />
+    <ClCompile Include="src\cpp\json\jsoncpp.cpp" />
+    <ClCompile Include="src\cpp\metaeng\Data.cpp" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='tests'">
-    <ClCompile Include="tests\cxx\TestsMain.cpp" />
-    <ClCompile Include="tests\cxx\Data_TestSuite.cpp" />
+    <ClCompile Include="tests\cpp\TestsMain.cpp" />
+    <ClCompile Include="tests\cpp\Data_TestSuite.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{732BAAC0-305B-48C7-AA9E-222E45EC02F4}</ProjectGuid>
@@ -117,7 +117,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ChaosCore\include;D:\Dropbox\Development\MetaEngine\MetaEngine\ext\jsoncpp;D:\Dropbox\Development\MetaEngine\MetaEngine\src\cxx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ArcaneCore\include;D:\Dropbox\Development\MetaEngine\MetaEngine\ext\jsoncpp;D:\Dropbox\Development\MetaEngine\MetaEngine\src\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -134,14 +134,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ChaosCore\include;D:\Dropbox\Development\MetaEngine\MetaEngine\ext\jsoncpp;D:\Dropbox\Development\MetaEngine\MetaEngine\src\cxx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ArcaneCore\include;D:\Dropbox\Development\MetaEngine\MetaEngine\src\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\build\win_x86;D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ChaosCore\lib\win_x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>chaoscore_test.lib;chaoscore_base.lib;chaoscore_io.lib;metaengine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\build\win_x86;D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ArcaneCore\lib\win_x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>arcanecore_test.lib;arcanecore_base.lib;arcanecore_io.lib;metaengine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

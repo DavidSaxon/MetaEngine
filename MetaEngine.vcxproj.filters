@@ -2,6 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="tests\cxx\TestsMain.cpp" />
-    <ClCompile Include="tests\cxx\Accessor_TestSuite.cpp" />
+    <ClCompile Include="tests\cxx\Data_TestSuite.cpp" />
   </ItemGroup>
 </Project>
