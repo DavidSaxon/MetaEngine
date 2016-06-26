@@ -29,7 +29,7 @@ contains configuration data in relation to application resources:
 
 For the sake of this example we will assume that the above JSON data is
 stored in the following file relative to the runtime:
-```meta/resources.json```
+`meta/resources.json`
 
 Loading and storing the data is done by constructing a metaeng::Data object:
 
@@ -52,7 +52,7 @@ for arc::io::sys::Path objects, where the JSON value is expected to be a
 string array: metaeng::Data::get<arc::io::sys::Path>().
 Retrieving the value as a arc::io::sys::Path applies value expansion, which
 means keys to other valid path values can be used in the data and will be
-resolved when retrieved, e.g. ```"{$resource_path}"```
+resolved when retrieved, e.g. `"{$resource_path}"`
 
 ```cpp
 arc::io::sys::Path gui_path;
@@ -60,11 +60,11 @@ meta_resources.get("gui_resource_path", gui_path);
 // gui_path now contains: "res/gui"
 ```
 
-To access nested data the ```'.'``` character is used. For example to access
-the value of the ```"resource_path"``` value inside of the the ```"fonts"```
-section, the key: ```"fonts.resource_path"``` would be used. Values can be
+To access nested data the `'.'` character is used. For example to access
+the value of the `"resource_path"` value inside of the the `"fonts"`
+section, the key: `"fonts.resource_path"` would be used. Values can be
 nested arbitrarily deep in the JSON data with the keys being chained using
-```'.'```
+`'.'`
 
 ```cpp
 arc::io::sys::Path fonts_path;
