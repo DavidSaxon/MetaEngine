@@ -21,9 +21,12 @@
   <ItemGroup Condition="'$(Configuration)'=='Lib'">
     <ClCompile Include="src\cpp\json\jsoncpp.cpp" />
     <ClCompile Include="src\cpp\metaeng\Data.cpp" />
+    <ClCompile Include="src\cpp\metaengine\AbstractDocument.cpp" />
+    <ClCompile Include="src\cpp\metaengine\Document.cpp" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='tests'">
     <ClCompile Include="tests\cpp\TestsMain.cpp" />
+    <ClCompile Include="tests\cpp\AbstractDocument_TestSuite.cpp" />
     <ClCompile Include="tests\cpp\Data_TestSuite.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

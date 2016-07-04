@@ -5,6 +5,8 @@ set(LIB_SRC
 	src/cpp/json/jsoncpp.cpp
 
 	src/cpp/metaeng/Data.cpp
+
+    src/cpp/metaengine/Document.cpp
 )
 
 set(TESTS_SUITES
