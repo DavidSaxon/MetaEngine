@@ -8,6 +8,7 @@
 #include <cassert>
 #include <memory>
 
+#include <arcanecore/base/Exceptions.hpp>
 #include <arcanecore/base/str/UTF8String.hpp>
 #include <arcanecore/io/sys/Path.hpp>
 
@@ -187,17 +188,35 @@ public:
     /*!
      * \brief Returns whether this Document is using data loaded from the file
      *        system.
+     *
+     * \note This does indicate whether the data actually loaded correctly,
+     *       see has_valid_file_data().
      */
     bool is_using_file_path() const;
 
     /*!
      * \brief Returns whether this Document is using data loaded from memory.
      *
+     * \note This does indicate whether the data actually loaded correctly,
+     *       see has_valid_memory_data().
+     *
      * \note If is_using_file_path() returns ```true``` then data loaded from
      *       the file system will be used over data loaded from memory, unless
      *       there is an error parsing or retrieving values from the file data.
      */
     bool is_using_memory() const;
+
+    /*!
+     * \brief Returns whether this Document currently has valid loaded data from
+     *        the file system.
+     */
+    bool has_valid_file_data() const;
+
+    /*!
+     * \brief Returns whether this Document currently has valid loaded data from
+     *        memory.
+     */
+    bool has_valid_memory_data() const;
 
     /*!
      * \brief Reloads the data of this document.

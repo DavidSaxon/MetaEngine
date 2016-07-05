@@ -4,15 +4,13 @@ project(MetaEngine)
 set(LIB_SRC
 	src/cpp/json/jsoncpp.cpp
 
-	src/cpp/metaeng/Data.cpp
-
     src/cpp/metaengine/Document.cpp
 )
 
 set(TESTS_SUITES
     tests/cpp/TestsMain.cpp
 
-    tests/cpp/Data_TestSuite.cpp
+    tests/cpp/Document_TestSuite.cpp
 )
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/linux_x86)

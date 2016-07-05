@@ -24,8 +24,8 @@ Document::Document(const arc::io::sys::Path& file_path)
     m_file_path (file_path),
     m_using_path(true),
     m_memory    (nullptr),
-    m_file_root(nullptr),
-    m_mem_root (nullptr)
+    m_file_root (nullptr),
+    m_mem_root  (nullptr)
 {
     reload();
 }
@@ -34,8 +34,8 @@ Document::Document(const arc::str::UTF8String* memory)
     :
     m_using_path(false),
     m_memory    (memory),
-    m_file_root(nullptr),
-    m_mem_root (nullptr)
+    m_file_root (nullptr),
+    m_mem_root  (nullptr)
 {
     reload();
 }
@@ -47,8 +47,8 @@ Document::Document(
     m_file_path (file_path),
     m_using_path(true),
     m_memory    (memory),
-    m_file_root(nullptr),
-    m_mem_root (nullptr)
+    m_file_root (nullptr),
+    m_mem_root  (nullptr)
 {
     reload();
 }
@@ -89,6 +89,16 @@ bool Document::is_using_memory() const
     return m_memory != nullptr;
 }
 
+bool Document::has_valid_file_data() const
+{
+    return m_file_root != nullptr;
+}
+
+bool Document::has_valid_memory_data() const
+{
+    return m_mem_root != nullptr;
+}
+
 void Document::reload()
 {
     // clean up any existing data
@@ -121,7 +131,6 @@ void Document::reload()
         catch(const arc::ex::ArcException& exc)
         {
             // check if mem, if not rethrow, else
-            // TODO: write to load-fail handler
             if(m_memory == nullptr)
             {
                 // no fallback, rethrow
@@ -178,15 +187,30 @@ void Document::reload()
     {
         try
         {
-            parse(*m_memory, m_file_root);
+            parse(*m_memory, m_mem_root);
         }
         catch(const arc::ex::ParseError& exc)
         {
-            arc::str::UTF8String error_message;
-            error_message << "Failed to parse JSON data from memory: <"
-                          << reinterpret_cast<arc::uint64>(m_memory)
-                          << "> with message:\n" << exc.what();
-            throw arc::ex::ParseError(error_message);
+            if(!has_valid_file_data())
+            {
+                // there's no valid data, rethrow
+                arc::str::UTF8String error_message;
+                error_message << "Failed to parse JSON data from memory: <"
+                              << reinterpret_cast<arc::uint64>(m_memory)
+                              << "> with message:\n" << exc.what();
+                throw arc::ex::ParseError(error_message);
+            }
+            else
+            {
+                // trigger a warning
+                arc::str::UTF8String error_message;
+                error_message << "Fallback to memory is not available for "
+                              << "Document using file: \"" << m_file_path
+                              << "\". Memory data failed to load with error: "
+                              << exc.get_type() << ": " << exc.what();
+                s_load_reporter(m_file_path, error_message);
+            }
+
         }
     }
 }

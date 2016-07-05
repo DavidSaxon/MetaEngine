@@ -1,0 +1,11 @@
+{
+    "first_error": 3,
+    "resource_path": ["res"],
+    "gui_resource_path": ["${resource_path}", "gui"],
+    "fonts_resource_path": ["${gui_resource_path}", "fonts"],
+    "fonts":
+    {
+        "supported_formats":: ["ttf", "otf"]
+    },
+    "bool_test": true
+}
