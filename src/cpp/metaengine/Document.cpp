@@ -200,7 +200,7 @@ void Document::reload()
                               << "> with message:\n" << exc.what();
                 throw arc::ex::ParseError(error_message);
             }
-            else
+            else if(s_load_reporter != nullptr)
             {
                 // trigger a warning
                 arc::str::UTF8String error_message;

@@ -23,6 +23,7 @@
     <ClCompile Include="src\cpp\metaeng\Data.cpp" />
     <ClCompile Include="src\cpp\metaengine\AbstractDocument.cpp" />
     <ClCompile Include="src\cpp\metaengine\Document.cpp" />
+    <ClCompile Include="src\cpp\metaengine\visitors\Primitive.cpp" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='tests'">
     <ClCompile Include="tests\cpp\TestsMain.cpp" />

@@ -8,6 +8,9 @@ ARC_TEST_MODULE(Document)
 
 #include <metaengine/Document.hpp>
 
+// TODO: REMOVE ME
+#include <metaengine/visitors/Primitive.hpp>
+
 namespace
 {
 
@@ -350,5 +353,424 @@ ARC_TEST_UNIT_FIXTURE(load_fallback, LoadFallbackFixture)
     }
     LoadFallbackFixture::reset_state();
 }
+
+//------------------------------------------------------------------------------
+//                             VISITOR IMPLEMENTATION
+//------------------------------------------------------------------------------
+
+class TestVisitor : public metaengine::Visitor<arc::str::UTF8String>
+{
+public:
+
+    static TestVisitor& instance()
+    {
+        static TestVisitor v;
+        return v;
+    }
+
+    virtual bool retrieve(const Json::Value* value)
+    {
+        // check type
+        if(!value->isString())
+        {
+            return false;
+        }
+
+        m_value = arc::str::UTF8String(value->asCString());
+        return true;
+    }
+};
+
+//------------------------------------------------------------------------------
+//                                      GET
+//------------------------------------------------------------------------------
+
+class GetFixture : public virtual arc::test::Fixture
+{
+public:
+
+    //-------------------------PUBLIC STATIC ATTRIBUTES-------------------------
+
+    static bool report_callback;
+    static arc::io::sys::Path report_file_path;
+    static arc::str::UTF8String report_message;
+
+    //----------------------------CALLBACK FUNCTIONS----------------------------
+
+    static void reporter_func(
+            const arc::io::sys::Path& file_path,
+            const arc::str::UTF8String& message)
+    {
+        report_callback = true;
+        report_file_path = file_path;
+        report_message   = report_message;
+    }
+
+    //----------------------------PUBLIC ATTRIBUTES-----------------------------
+
+    arc::str::UTF8String key;
+    arc::str::UTF8String expected;
+
+    arc::io::sys::Path correct_path;
+    arc::io::sys::Path missing_path;
+    arc::io::sys::Path incorrect_type_path;
+    arc::io::sys::Path invalid_path;
+
+    arc::str::UTF8String correct_mem;
+    arc::str::UTF8String missing_mem;
+    arc::str::UTF8String incorrect_type_mem;
+    arc::str::UTF8String invalid_mem;
+
+    //-------------------------PUBLIC MEMBER FUNCTIONS--------------------------
+
+    virtual void setup()
+    {
+        key = "value_1";
+        expected = "Hello world!";
+
+        // paths
+        correct_path << "tests" << "meta" << "get" << "correct.json";
+        missing_path << "tests" << "meta" << "get" << "missing.json";
+        incorrect_type_path
+            << "tests" << "meta" << "get" << "incorrect_type.json";
+        invalid_path << "tests" << "meta" << "get" << "invalid.json";
+
+        // strings
+        correct_mem =
+            "{"
+            "    \"value_1\": \"Hello world!\","
+            "    \"value_2\": 175"
+            "}";
+        missing_mem =
+            "{"
+            "    \"value_2\": 175"
+            "}";
+        incorrect_type_mem =
+            "{"
+            "    \"value_1\": 12,"
+            "    \"value_2\": 175"
+            "}";
+        invalid_mem = "not JSON at all";
+
+        // connect callback
+        metaengine::Document::set_get_fallback_reporter(reporter_func);
+    }
+
+    static void reset_state()
+    {
+        report_callback = false;
+        report_file_path = arc::io::sys::Path();
+        report_message = arc::str::UTF8String();
+    }
+};
+
+bool GetFixture::report_callback = false;
+arc::io::sys::Path GetFixture::report_file_path;
+arc::str::UTF8String GetFixture::report_message;
+
+ARC_TEST_UNIT_FIXTURE(get, GetFixture)
+{
+    ARC_TEST_MESSAGE("Checking get using files only");
+
+    ARC_TEST_MESSAGE("Checking correct data");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(fixture->correct_path);
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking missing key");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(fixture->missing_path);
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::KeyError
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking incorrect type");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(fixture->incorrect_type_path);
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking get using memory only");
+
+    ARC_TEST_MESSAGE("Checking correct data");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(&fixture->correct_mem);
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking missing key");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(&fixture->missing_mem);
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::KeyError
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking incorrect type");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(&fixture->incorrect_type_mem);
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+
+
+    ARC_TEST_MESSAGE("Checking valid file and valid memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->correct_path,
+            &fixture->correct_mem
+        );
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking valid file and missing memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->correct_path,
+            &fixture->missing_mem
+        );
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking valid file and incorrect type memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->correct_path,
+            &fixture->incorrect_type_mem
+        );
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking valid file and invalid memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->correct_path,
+            &fixture->invalid_mem
+        );
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+
+    ARC_TEST_MESSAGE("Checking missing file and valid memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->missing_path,
+            &fixture->correct_mem
+        );
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_TRUE(GetFixture::report_callback);
+        ARC_CHECK_EQUAL(GetFixture::report_file_path, fixture->missing_path);
+    }
+
+    ARC_TEST_MESSAGE("Checking missing file and missing memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->missing_path,
+            &fixture->missing_mem
+        );
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::KeyError
+        );
+        ARC_CHECK_TRUE(GetFixture::report_callback);
+        ARC_CHECK_EQUAL(GetFixture::report_file_path, fixture->missing_path);
+    }
+
+    ARC_TEST_MESSAGE("Checking missing file and incorrect type memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->missing_path,
+            &fixture->incorrect_type_mem
+        );
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_TRUE(GetFixture::report_callback);
+        ARC_CHECK_EQUAL(GetFixture::report_file_path, fixture->missing_path);
+    }
+
+    ARC_TEST_MESSAGE("Checking missing file and invalid memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->missing_path,
+            &fixture->invalid_mem
+        );
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::KeyError
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+
+    ARC_TEST_MESSAGE("Checking incorrect type file and valid memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->incorrect_type_path,
+            &fixture->correct_mem
+        );
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_TRUE(GetFixture::report_callback);
+        ARC_CHECK_EQUAL(
+            GetFixture::report_file_path,
+            fixture->incorrect_type_path
+        );
+    }
+
+    ARC_TEST_MESSAGE("Checking incorrect type file and missing memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->incorrect_type_path,
+            &fixture->missing_mem
+        );
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::KeyError
+        );
+        ARC_CHECK_TRUE(GetFixture::report_callback);
+        ARC_CHECK_EQUAL(
+            GetFixture::report_file_path,
+            fixture->incorrect_type_path
+        );
+    }
+
+    ARC_TEST_MESSAGE("Checking incorrect type file and incorrect type memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->incorrect_type_path,
+            &fixture->incorrect_type_mem
+        );
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_TRUE(GetFixture::report_callback);
+        ARC_CHECK_EQUAL(
+            GetFixture::report_file_path,
+            fixture->incorrect_type_path
+        );
+    }
+
+    ARC_TEST_MESSAGE("Checking incorrect type file and invalid_mem memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->incorrect_type_path,
+            &fixture->invalid_mem
+        );
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+
+    ARC_TEST_MESSAGE("Checking invalid file and valid memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->invalid_path,
+            &fixture->correct_mem
+        );
+        ARC_CHECK_EQUAL(
+            *doc.get(fixture->key, TestVisitor::instance()),
+            fixture->expected
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking invalid file and missing memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->invalid_path,
+            &fixture->missing_mem
+        );
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::KeyError
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+
+    ARC_TEST_MESSAGE("Checking invalid file and incorrect type memory");
+    GetFixture::reset_state();
+    {
+        metaengine::Document doc(
+            fixture->invalid_path,
+            &fixture->incorrect_type_mem
+        );
+        ARC_CHECK_THROW(
+            (*doc.get(fixture->key, TestVisitor::instance())),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_FALSE(GetFixture::report_callback);
+    }
+}
+
+// TODO: check null callback functions
 
 } // namespace anonymous

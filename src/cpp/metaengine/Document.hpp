@@ -25,10 +25,14 @@ namespace metaengine
 {
 
 /*!
- * \brief TODO:
+ * \brief Abstract base class that defines a Visitor object that can be used to
+ *        retrieve values from a Document and provide access to said values as a
+ *        specific type.
  *
- * TODO: suggest operator
+ * To define a Visitor, only the Visitor::retrieve() function must be
+ * implemented.
  */
+template <typename ReturnType>
 class Visitor
 {
 private:
@@ -54,15 +58,57 @@ public:
     }
 
     //--------------------------------------------------------------------------
+    //                                 OPERATORS
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief Returns the value that this Visitor holds.
+     */
+    const ReturnType& operator*() const
+    {
+        return m_value;
+    }
+
+    //--------------------------------------------------------------------------
     //                          PUBLIC MEMBER FUNCTIONS
     //--------------------------------------------------------------------------
 
     /*!
-     * \brief TODO:
-     *
-     * TODO: throw on failure
+     * \brief Returns the value that this Visitor holds.
      */
-    virtual void retrieve(const Json::Value* value) = 0;
+    const ReturnType& get_value() const
+    {
+        return m_value;
+    }
+
+    /*!
+     * \brief Attempts to parse the given JSON value as this Visitor's type and
+     *        update its internal value.
+     *
+     * This function will be called when this Visitor is passed into the
+     * Document::get() function. It will be passed the JSON value that is
+     * associated with the key used with the Document::get() function.
+     *
+     * To implement this function the JSON value should be checked to see if it
+     * is convertible to this Visitor's type, if not the function should
+     * return ```false``` and let the Document::get() function preform the error
+     * handling. If the value is convertible to the type then it should be
+     * converted and stored in this object's Visitor::m_value and then should
+     * return ```true```.
+     */
+    virtual bool retrieve(const Json::Value* value) = 0;
+
+protected:
+
+    //--------------------------------------------------------------------------
+    //                            PROTECTED ATTRIBUTES
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief The internal value of this Visitor. It will be set when the
+     *        retrieve function completes successfully.
+     */
+    ReturnType m_value;
 };
 
 
@@ -278,30 +324,40 @@ public:
             // if we got a value hand off to the visitor
             if(value != nullptr)
             {
+                bool retrieve_success = false;
                 try
                 {
-                    visitor.retrieve(value);
-                    // visitor retrieve without error, we're done!
+                    retrieve_success = visitor.retrieve(value);
+                }
+                catch(...)
+                {
+                    retrieve_success = false;
+                }
+
+                // if everything was successful we're done
+                if(retrieve_success)
+                {
                     return visitor;
                 }
-                catch(const arc::ex::ArcException& exc)
+
+                // throw if there's no memory fallback
+                if(m_mem_root == nullptr)
                 {
-                    // rethrow if there's no memory fallback
-                    if(m_mem_root == nullptr)
-                    {
-                        throw exc;
-                    }
-                    else if(s_get_reporter != nullptr)
-                    {
-                        // trigger a warning and prepare to fallback
-                        arc::str::UTF8String error_message;
-                        error_message << "Falling back to retrieving value from "
-                                      << "memory. Failed to retrieve value from "
-                                      << "file: \"" << m_file_path << "\" with "
-                                      << "error: " << exc.get_type() << ": "
-                                      << exc.what();
-                        s_get_reporter(m_file_path, error_message);
-                    }
+                    arc::str::UTF8String error_message;
+                    error_message << "Failed to retrieve value for key: \""
+                                  << key << "\" as the requested type.";
+                    throw arc::ex::TypeError(error_message);
+                }
+                else if(s_get_reporter != nullptr)
+                {
+                    // trigger a warning and prepare to fallback
+                    arc::str::UTF8String error_message;
+                    error_message << "Falling back to retrieving value from "
+                                  << "memory. Failed to retrieve value for "
+                                  << "key: \"" << key << "\" as the requested "
+                                  << "type from file: \"" << m_file_path
+                                  << "\".";
+                    s_get_reporter(m_file_path, error_message);
                 }
             }
         }
@@ -316,9 +372,30 @@ public:
             // if the above function didn't throw, the value should never be
             // null
             assert(value != nullptr);
-            // hand off to the visitor, again if this fails we just let it throw
-            // out of this function
-            visitor.retrieve(value);
+
+            // hand off to the visitor
+            bool retrieve_success = false;
+            try
+            {
+                retrieve_success = visitor.retrieve(value);
+            }
+            catch(...)
+            {
+                retrieve_success = false;
+            }
+
+            // if everything was successful we're done
+            if(retrieve_success)
+            {
+                return visitor;
+            }
+
+            // throw
+            arc::str::UTF8String error_message;
+            error_message << "Failed to retrieve value for key: \""
+                          << key << "\" as the requested type.";
+            throw arc::ex::TypeError(error_message);
+
         }
 
         return visitor;
