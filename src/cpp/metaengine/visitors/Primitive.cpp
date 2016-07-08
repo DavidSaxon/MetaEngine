@@ -1,13 +1,17 @@
 #include "metaengine/visitors/Primitive.hpp"
 
-#include <json/json.h>
-
 namespace metaengine
 {
 
 //------------------------------------------------------------------------------
 //                                BOOLEAN VISITOR
 //------------------------------------------------------------------------------
+
+BoolV& BoolV::instance()
+{
+    static BoolV v;
+    return v;
+}
 
 bool BoolV::retrieve(const Json::Value* value)
 {
@@ -25,6 +29,12 @@ bool BoolV::retrieve(const Json::Value* value)
 //                             BOOLEAN VECTOR VISITOR
 //------------------------------------------------------------------------------
 
+BoolVectorV& BoolVectorV::instance()
+{
+    static BoolVectorV v;
+    return v;
+}
+
 bool BoolVectorV::retrieve(const Json::Value* value)
 {
     // check type
@@ -41,12 +51,12 @@ bool BoolVectorV::retrieve(const Json::Value* value)
     for(child = value->begin(); child != value->end(); ++child)
     {
         // check if the value can be converted
-        if(!value->isBool())
+        if(!child->isBool())
         {
             return false;
         }
         // perform conversion
-        temp.push_back(value->asBool());
+        temp.push_back(child->asBool());
     }
 
     // no errors, use the temp value

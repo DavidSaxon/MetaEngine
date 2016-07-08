@@ -76,8 +76,9 @@ protected:
             const arc::str::UTF8String& type,
             const arc::str::UTF8String& message)
         :
-        m_type   (type),
-        m_message(message)
+        std::exception(),
+        m_type        (type),
+        m_message     (message)
     {
     }
 

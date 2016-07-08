@@ -544,6 +544,13 @@ public:
      */
     UTF8String& operator<<(float other);
 
+    /*!
+     * \brief Stream operator.
+     *
+     * Extends this UTF8String with the given double.
+     */
+    UTF8String& operator<<(double other);
+
     //--------------------------------------------------------------------------
     //                          PUBLIC MEMBER FUNCTIONS
     //--------------------------------------------------------------------------

@@ -187,10 +187,11 @@ public:
      *
      * \param data The byte array to write to the file.
      * \param length The number of bytes in the provided data.
+     * \param flush Whether flush() will be called after writing.
      *
      * \throws arc::ex::StateError If this FileWriter is not open.
      */
-    void write(const char* data, std::size_t length);
+    void write(const char* data, std::size_t length, bool flush = true);
 
     /*!
      * \brief Writes the given arc::str::UTF8String to the file.
@@ -200,10 +201,11 @@ public:
      * converted to this FileWriter's newline type and are left as is.
      *
      * \param data The string to write to the file.
+     * \param flush Whether flush() will be called after writing.
      *
      * \throws arc::ex::StateError If this FileWriter is not open.
      */
-    void write(const arc::str::UTF8String& data);
+    void write(const arc::str::UTF8String& data, bool flush = true);
 
     /*!
      * \brief Writes the given data to the file followed by a newline symbol.
@@ -217,10 +219,11 @@ public:
      *
      * \param data The byte array to write to the file.
      * \param length The number of bytes in the provided data.
+     * \param flush Whether flush() will be called after writing.
      *
      * \throws arc::ex::StateError If this FileWriter is not open.
      */
-    void write_line(const char* data, std::size_t length);
+    void write_line(const char* data, std::size_t length, bool flush = true);
 
     /*!
      * \brief Writes the given arc::str::UTF8String to the file followed by a
@@ -233,10 +236,18 @@ public:
      * to match the FileWriter's newline type.
      *
      * \param data The string to write to the file.
+     * \param flush Whether flush() will be called after writing.
      *
      * \throws arc::ex::StateError If this FileWriter is not open.
      */
-    void write_line(const arc::str::UTF8String& data);
+    void write_line(const arc::str::UTF8String& data, bool flush = true);
+
+    /*!
+     * \brief Writes an currently buffered data to the file.
+     *
+     * \throws arc::ex::StateError If this FileWriter is not open.
+     */
+    void flush();
 
 private:
 
