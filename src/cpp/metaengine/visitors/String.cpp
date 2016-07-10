@@ -65,7 +65,7 @@ bool UTF8StringVectorV::retrieve(
         // check if the data can be converted
         if(!child->isString())
         {
-            error_message << "Array element data: \"" << data->toStyledString()
+            error_message << "Array element data: \"" << child->toStyledString()
                           << "\" cannot be converted to UTF-8 string type.";
             return false;
         }

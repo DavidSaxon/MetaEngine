@@ -266,7 +266,7 @@ public:
             if(!child->isDouble())
             {
                 error_message << "Array element data: \""
-                              << data->toStyledString() << "\" cannot be "
+                              << child->toStyledString() << "\" cannot be "
                               << "converted to floating point type.";
                 return false;
             }
