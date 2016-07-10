@@ -288,7 +288,7 @@ ARC_TEST_UNIT_FIXTURE(float_v, FloatVFixture)
             *doc.get("key_1", metaengine::FloatV<float>::instance()),
             3.14F
         );
-        ARC_CHECK_FLOAT_EQUAL(
+        ARC_CHECK_EQUAL(
             *doc.get("key_2", metaengine::FloatV<double>::instance()),
             -73.02
         );
