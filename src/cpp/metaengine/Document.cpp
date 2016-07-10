@@ -136,7 +136,8 @@ void Document::reload()
                 // no fallback, rethrow
                 arc::str::UTF8String error_message;
                 error_message << "Failed to open file: \"" << m_file_path
-                              << "\" with message:\n" << exc.what();
+                              << "\" with error: " << exc.get_type() << "\n"
+                              << exc.get_message();
                 throw arc::ex::InvalidPathError(error_message);
             }
             else if(s_load_reporter != nullptr)
@@ -145,7 +146,8 @@ void Document::reload()
                 arc::str::UTF8String error_message;
                 error_message << "Falling back to loading data from memory "
                               << "only. Failed to open file: \"" << m_file_path
-                              << "\" with message:\n" << exc.what();
+                              << "\" with error: " << exc.get_type() << "\n"
+                              << exc.get_message();
                 s_load_reporter(m_file_path, error_message);
             }
         }

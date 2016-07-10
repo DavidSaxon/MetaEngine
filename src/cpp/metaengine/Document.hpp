@@ -24,6 +24,8 @@ class Value;
 namespace metaengine
 {
 
+class Document;
+
 /*!
  * \brief Abstract base class that defines a Visitor object that can be used to
  *        retrieve values from a Document and provide access to said values as a
@@ -82,21 +84,30 @@ public:
     }
 
     /*!
-     * \brief Attempts to parse the given JSON value as this Visitor's type and
+     * \brief Attempts to parse the given JSON data as this Visitor's type and
      *        update its internal value.
      *
      * This function will be called when this Visitor is passed into the
-     * Document::get() function. It will be passed the JSON value that is
+     * Document::get() function. It will be passed the JSON data that is
      * associated with the key used with the Document::get() function.
      *
-     * To implement this function the JSON value should be checked to see if it
+     * To implement this function the JSON data should be checked to see if it
      * is convertible to this Visitor's type, if not the function should
      * return ```false``` and let the Document::get() function preform the error
-     * handling. If the value is convertible to the type then it should be
+     * handling. If the data is convertible to the type then it should be
      * converted and stored in this object's Visitor::m_value and then should
      * return ```true```.
+     *
+     * \param data The JSON value to attempt to convert to this Visitor's type.
+     * \param requester The Document that has called this function and provided
+     *                  the JSON data.
+     * \param error_message Can be used to return an error message if the
+     *                      conversion was not successful.
      */
-    virtual bool retrieve(const Json::Value* value) = 0;
+    virtual bool retrieve(
+            const Json::Value* data,
+            Document* requester,
+            arc::str::UTF8String& error_message) = 0;
 
 protected:
 
@@ -296,10 +307,10 @@ public:
         // attempt to retrieve from the file system first
         if(m_file_root != nullptr)
         {
-            const Json::Value* value = nullptr;
+            const Json::Value* data = nullptr;
             try
             {
-                value = get_value(m_file_root.get(), key);
+                data = get_value(m_file_root.get(), key);
             }
             catch(const arc::ex::KeyError& exc)
             {
@@ -321,13 +332,15 @@ public:
                 }
             }
 
-            // if we got a value hand off to the visitor
-            if(value != nullptr)
+            // if we got data hand off to the visitor
+            if(data != nullptr)
             {
                 bool retrieve_success = false;
+                arc::str::UTF8String retrieve_error;
                 try
                 {
-                    retrieve_success = visitor.retrieve(value);
+                    retrieve_success =
+                        visitor.retrieve(data, this, retrieve_error);
                 }
                 catch(...)
                 {
@@ -340,23 +353,30 @@ public:
                     return visitor;
                 }
 
+                // begin building the error message
+                arc::str::UTF8String error_message;
+                error_message << "Failed to retrieve value for key: \"" << key
+                              << "\" ";
+                // was there an explicit message from the Visitor?
+                if(!retrieve_error.is_empty())
+                {
+                    error_message << "with error: " << retrieve_error;
+                }
+                else
+                {
+                    error_message << "as the requested type.";
+                }
+
                 // throw if there's no memory fallback
                 if(m_mem_root == nullptr)
                 {
-                    arc::str::UTF8String error_message;
-                    error_message << "Failed to retrieve value for key: \""
-                                  << key << "\" as the requested type.";
                     throw arc::ex::TypeError(error_message);
                 }
                 else if(s_get_reporter != nullptr)
                 {
                     // trigger a warning and prepare to fallback
-                    arc::str::UTF8String error_message;
                     error_message << "Falling back to retrieving value from "
-                                  << "memory. Failed to retrieve value for "
-                                  << "key: \"" << key << "\" as the requested "
-                                  << "type from file: \"" << m_file_path
-                                  << "\".";
+                                  << "memory. " << error_message;
                     s_get_reporter(m_file_path, error_message);
                 }
             }
@@ -365,19 +385,21 @@ public:
         // attempt to retrieve from memory if anything above failed
         if(m_mem_root != nullptr)
         {
-            const Json::Value* value = nullptr;
-            // attempt to get the value from the JSON root, if this fails we
+            const Json::Value* data = nullptr;
+            // attempt to get the data from the JSON root, if this fails we
             // just let it throw out of this function
-            value = get_value(m_mem_root.get(), key);
-            // if the above function didn't throw, the value should never be
+            data = get_value(m_mem_root.get(), key);
+            // if the above function didn't throw, the data should never be
             // null
-            assert(value != nullptr);
+            assert(data != nullptr);
 
             // hand off to the visitor
             bool retrieve_success = false;
+            arc::str::UTF8String retrieve_error;
             try
             {
-                retrieve_success = visitor.retrieve(value);
+                retrieve_success =
+                    visitor.retrieve(data, this, retrieve_error);
             }
             catch(...)
             {
@@ -393,7 +415,15 @@ public:
             // throw
             arc::str::UTF8String error_message;
             error_message << "Failed to retrieve value for key: \""
-                          << key << "\" as the requested type.";
+                          << key << "\" ";
+            if(!retrieve_error.is_empty())
+            {
+                error_message << "with error: " << retrieve_error;
+            }
+            else
+            {
+                error_message << "as the requested type.";
+            }
             throw arc::ex::TypeError(error_message);
 
         }

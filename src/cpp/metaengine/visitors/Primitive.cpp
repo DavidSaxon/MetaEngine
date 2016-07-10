@@ -13,15 +13,20 @@ BoolV& BoolV::instance()
     return v;
 }
 
-bool BoolV::retrieve(const Json::Value* value)
+bool BoolV::retrieve(
+        const Json::Value* data,
+        Document* requester,
+        arc::str::UTF8String& error_message)
 {
     // check type
-    if(!value->isBool())
+    if(!data->isBool())
     {
+        error_message << "Data: \"" << data->toStyledString() << "\" cannot be "
+                      << "converted to boolean type.";
         return false;
     }
 
-    m_value = value->asBool();
+    m_value = data->asBool();
     return true;
 }
 
@@ -35,11 +40,16 @@ BoolVectorV& BoolVectorV::instance()
     return v;
 }
 
-bool BoolVectorV::retrieve(const Json::Value* value)
+bool BoolVectorV::retrieve(
+        const Json::Value* data,
+        Document* requester,
+        arc::str::UTF8String& error_message)
 {
     // check type
-    if(!value->isArray())
+    if(!data->isArray())
     {
+        error_message << "Data: \"" << data->toStyledString() << "\" cannot be "
+                      << "converted to array type.";
         return false;
     }
 
@@ -48,11 +58,13 @@ bool BoolVectorV::retrieve(const Json::Value* value)
 
     // iterate over the values
     Json::Value::const_iterator child;
-    for(child = value->begin(); child != value->end(); ++child)
+    for(child = data->begin(); child != data->end(); ++child)
     {
-        // check if the value can be converted
+        // check if the data can be converted
         if(!child->isBool())
         {
+            error_message << "Array element data: \"" << child->toStyledString()
+                          << "\" cannot be converted to boolean type.";
             return false;
         }
         // perform conversion

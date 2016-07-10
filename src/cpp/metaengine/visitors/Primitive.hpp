@@ -3,8 +3,8 @@
  * \brief Visitor objects for retrieving primitive types from Documents.
  * \author David Saxon
  */
-#ifndef METAENGINE_PRIMITIVE_HPP_
-#define METAENGINE_PRIMITIVE_HPP_
+#ifndef METAENGINE_VISITORS_PRIMITIVE_HPP_
+#define METAENGINE_VISITORS_PRIMITIVE_HPP_
 
 #include <json/json.h>
 
@@ -31,7 +31,10 @@ public:
     static BoolV& instance();
 
     // override
-    virtual bool retrieve(const Json::Value* value);
+    virtual bool retrieve(
+            const Json::Value* data,
+            Document* requester,
+            arc::str::UTF8String& error_message);
 };
 
 //------------------------------------------------------------------------------
@@ -52,7 +55,10 @@ public:
     static BoolVectorV& instance();
 
     // override
-    virtual bool retrieve(const Json::Value* value);
+    virtual bool retrieve(
+            const Json::Value* data,
+            Document* requester,
+            arc::str::UTF8String& error_message);
 };
 
 //------------------------------------------------------------------------------
@@ -81,16 +87,21 @@ public:
     }
 
     // override
-    virtual bool retrieve(const Json::Value* value)
+    virtual bool retrieve(
+            const Json::Value* data,
+            Document* requester,
+            arc::str::UTF8String& error_message)
     {
         // check type
-        if(!value->isInt())
+        if(!data->isInt())
         {
+            error_message << "Data: \"" << data->toStyledString() << "\" "
+                          << "cannot be converted to integral type.";
             return false;
         }
 
         metaengine::Visitor<IntType>::m_value =
-            static_cast<IntType>(value->asInt());
+            static_cast<IntType>(data->asInt());
         return true;
     }
 };
@@ -121,11 +132,16 @@ public:
     }
 
     // override
-    virtual bool retrieve(const Json::Value* value)
+    virtual bool retrieve(
+            const Json::Value* data,
+            Document* requester,
+            arc::str::UTF8String& error_message)
     {
         // check type
-        if(!value->isArray())
+        if(!data->isArray())
         {
+            error_message << "Data: \"" << data->toStyledString() << "\" "
+                          << "cannot be converted to array type.";
             return false;
         }
 
@@ -134,11 +150,14 @@ public:
 
         // iterate over the values
         Json::Value::const_iterator child;
-        for(child = value->begin(); child != value->end(); ++child)
+        for(child = data->begin(); child != data->end(); ++child)
         {
-            // check if the value can be converted
+            // check if the data can be converted
             if(!child->isInt())
             {
+                error_message << "Array element data: \""
+                              << child->toStyledString() << "\" cannot be "
+                              << "converted to integral type.";
                 return false;
             }
             // perform conversion
@@ -177,16 +196,86 @@ public:
     }
 
     // override
-    virtual bool retrieve(const Json::Value* value)
+    virtual bool retrieve(
+            const Json::Value* data,
+            Document* requester,
+            arc::str::UTF8String& error_message)
     {
         // check type
-        if(!value->isDouble())
+        if(!data->isDouble())
         {
+            error_message << "Data: \"" << data->toStyledString() << "\" "
+                          << "cannot be converted to floating point type.";
             return false;
         }
 
         metaengine::Visitor<FloatType>::m_value =
-            static_cast<FloatType>(value->asDouble());
+            static_cast<FloatType>(data->asDouble());
+        return true;
+    }
+};
+
+//------------------------------------------------------------------------------
+//                              FLOAT VECTOR VISITOR
+//------------------------------------------------------------------------------
+
+/*!
+ * \brief Visitor object used to retrieve a vector of primitive floating point
+ *        numbers from a metaengine::Document.
+ *
+ *
+ * \tparam FloatType The floating point type that values should be retrieve as
+ *                   a vector of, e.g. ```float```, ```double```.
+ */
+template<typename FloatType>
+class FloatVectorV : public metaengine::Visitor<std::vector<FloatType>>
+{
+public:
+
+    /*!
+     * \brief Provides an existing static instance of this object.
+     */
+    static FloatVectorV<FloatType>& instance()
+    {
+        static FloatVectorV<FloatType> v;
+        return v;
+    }
+
+    // override
+    virtual bool retrieve(
+            const Json::Value* data,
+            Document* requester,
+            arc::str::UTF8String& error_message)
+    {
+        // check type
+        if(!data->isArray())
+        {
+            error_message << "Data: \"" << data->toStyledString() << "\" "
+                          << "cannot be converted to array type.";
+            return false;
+        }
+
+        // temp value
+        std::vector<FloatType> temp;
+
+        // iterate over the values
+        Json::Value::const_iterator child;
+        for(child = data->begin(); child != data->end(); ++child)
+        {
+            // check if the data can be converted
+            if(!child->isDouble())
+            {
+                error_message << "Array element data: \""
+                              << data->toStyledString() << "\" cannot be "
+                              << "converted to floating point type.";
+                return false;
+            }
+            // perform conversion
+            temp.push_back(static_cast<FloatType>(child->asDouble()));
+        }
+
+        // no errors, use the temp value
+        metaengine::Visitor<std::vector<FloatType>>::m_value = temp;
         return true;
     }
 };

@@ -308,4 +308,78 @@ ARC_TEST_UNIT_FIXTURE(float_v, FloatVFixture)
     }
 }
 
+//------------------------------------------------------------------------------
+//                                  FLOAT VECTOR
+//------------------------------------------------------------------------------
+
+class FloatVectorV : public arc::test::Fixture
+{
+public:
+
+    //----------------------------PUBLIC ATTRIBUTES-----------------------------
+
+    arc::str::UTF8String valid;
+    arc::str::UTF8String invalid;
+
+    std::vector<float> result_1;
+    std::vector<double> result_2;
+
+    //-------------------------PUBLIC MEMBER FUNCTIONS--------------------------
+
+    virtual void setup()
+    {
+        valid =
+            "{"
+            "   \"key_1\": [0.0],"
+            "   \"key_2\": [58.2, -0.0003, 1.233, -4839.23],"
+            "   \"empty\": []"
+            "}";
+        invalid = "{\"key_1\": 12, \"key_2\": false}";
+
+        result_1 = {0.0F};
+        result_2 = {58.2, -0.0003, 1.233, -4839.23};
+    }
+};
+
+ARC_TEST_UNIT_FIXTURE(float_vector_v, FloatVectorV)
+{
+    ARC_TEST_MESSAGE("Checking against valid data");
+    {
+        metaengine::Document doc(&fixture->valid);
+
+        std::vector<float> value_1(
+            *doc.get("key_1", metaengine::FloatVectorV<float>::instance()));
+        ARC_CHECK_EQUAL(value_1.size(), fixture->result_1.size());
+        for(std::size_t i = 0; i < value_1.size(); ++i)
+        {
+            ARC_CHECK_EQUAL(value_1[i], fixture->result_1[i]);
+        }
+
+        std::vector<double> value_2(
+            *doc.get("key_2", metaengine::FloatVectorV<double>::instance()));
+        ARC_CHECK_EQUAL(value_2.size(), fixture->result_2.size());
+        for(std::size_t i = 0; i < value_2.size(); ++i)
+        {
+            ARC_CHECK_EQUAL(value_2[i], fixture->result_2[i]);
+        }
+
+        std::vector<float> empty(
+            *doc.get("empty", metaengine::FloatVectorV<float>::instance()));
+        ARC_CHECK_EQUAL(empty.size(), 0);
+    }
+
+    ARC_TEST_MESSAGE("Checking against invalid data");
+    {
+        metaengine::Document doc(&fixture->invalid);
+        ARC_CHECK_THROW(
+            *doc.get("key_1", metaengine::FloatVectorV<double>::instance()),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_THROW(
+            *doc.get("key_2", metaengine::FloatVectorV<float>::instance()),
+            arc::ex::TypeError
+        );
+    }
+}
+
 } // namespace anonymous

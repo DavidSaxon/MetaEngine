@@ -6,6 +6,7 @@ set(LIB_SRC
 
     src/cpp/metaengine/Document.cpp
     src/cpp/metaengine/visitors/Primitive.cpp
+    src/cpp/metaengine/visitors/String.cpp
 )
 
 set(TESTS_SUITES
@@ -13,6 +14,7 @@ set(TESTS_SUITES
 
     tests/cpp/Document_TestSuite.cpp
     tests/cpp/visitors/Primitive_TestSuite.cpp
+    tests/cpp/visitors/String_TestSuite.cpp
 )
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/linux_x86)

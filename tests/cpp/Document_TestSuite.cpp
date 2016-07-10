@@ -368,7 +368,10 @@ public:
         return v;
     }
 
-    virtual bool retrieve(const Json::Value* value)
+    virtual bool retrieve(
+            const Json::Value* value,
+            metaengine::Document* requester,
+            arc::str::UTF8String& error_message)
     {
         // check type
         if(!value->isString())
