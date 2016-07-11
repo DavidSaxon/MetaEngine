@@ -17,6 +17,7 @@ UTF8StringV& UTF8StringV::instance()
 
 bool UTF8StringV::retrieve(
         const Json::Value* data,
+        const arc::str::UTF8String& key,
         Document* requester,
         arc::str::UTF8String& error_message)
 {
@@ -44,6 +45,7 @@ UTF8StringVectorV& UTF8StringVectorV::instance()
 
 bool UTF8StringVectorV::retrieve(
         const Json::Value* data,
+        const arc::str::UTF8String& key,
         Document* requester,
         arc::str::UTF8String& error_message)
 {

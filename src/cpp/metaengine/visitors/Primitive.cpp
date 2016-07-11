@@ -15,6 +15,7 @@ BoolV& BoolV::instance()
 
 bool BoolV::retrieve(
         const Json::Value* data,
+        const arc::str::UTF8String& key,
         Document* requester,
         arc::str::UTF8String& error_message)
 {
@@ -42,6 +43,7 @@ BoolVectorV& BoolVectorV::instance()
 
 bool BoolVectorV::retrieve(
         const Json::Value* data,
+        const arc::str::UTF8String& key,
         Document* requester,
         arc::str::UTF8String& error_message)
 {

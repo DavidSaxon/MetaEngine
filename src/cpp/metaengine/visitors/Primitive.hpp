@@ -33,6 +33,7 @@ public:
     // override
     virtual bool retrieve(
             const Json::Value* data,
+            const arc::str::UTF8String& key,
             Document* requester,
             arc::str::UTF8String& error_message);
 };
@@ -57,6 +58,7 @@ public:
     // override
     virtual bool retrieve(
             const Json::Value* data,
+            const arc::str::UTF8String& key,
             Document* requester,
             arc::str::UTF8String& error_message);
 };
@@ -89,6 +91,7 @@ public:
     // override
     virtual bool retrieve(
             const Json::Value* data,
+            const arc::str::UTF8String& key,
             Document* requester,
             arc::str::UTF8String& error_message)
     {
@@ -134,6 +137,7 @@ public:
     // override
     virtual bool retrieve(
             const Json::Value* data,
+            const arc::str::UTF8String& key,
             Document* requester,
             arc::str::UTF8String& error_message)
     {
@@ -198,6 +202,7 @@ public:
     // override
     virtual bool retrieve(
             const Json::Value* data,
+            const arc::str::UTF8String& key,
             Document* requester,
             arc::str::UTF8String& error_message)
     {
@@ -244,6 +249,7 @@ public:
     // override
     virtual bool retrieve(
             const Json::Value* data,
+            const arc::str::UTF8String& key,
             Document* requester,
             arc::str::UTF8String& error_message)
     {

@@ -143,6 +143,49 @@ public:
             );
             invalid.push_back(i);
         }
+
+        {
+            arc::str::UTF8String i(
+                "{"
+                "   \"key\": [\"relative\", \"@{key}\"]"
+                "}"
+            );
+            invalid.push_back(i);
+        }
+
+        {
+            arc::str::UTF8String i(
+                "{"
+                "   \"cyclic\": [\"first\", \"@{key}\", \"third\"],"
+                "   \"key\": [\"relative\", \"@{cyclic}\"]"
+                "}"
+            );
+            invalid.push_back(i);
+        }
+
+        {
+            arc::str::UTF8String i(
+                "{"
+                "   \"cyclic_1\": [\"first\", \"@{cyclic_2}\", \"third\"],"
+                "   \"key\": [\"relative\", \"@{cyclic_1}\"],"
+                "   \"cyclic_2\": [\"@{cyclic_1}\", \"element\"]"
+                "}"
+            );
+            invalid.push_back(i);
+        }
+
+        {
+            arc::str::UTF8String i(
+                "{"
+                "   \"ref\": \"ref_path\","
+                "   \"cyclic_1\": [\"@{ref}\", \"@{cyclic_2}\", \"third\"],"
+                "   \"key\": [\"relative\", \"@{cyclic_1}\"],"
+                "   \"cyclic_2\": [\"element\", \"@{key}\"]"
+                "}"
+            );
+            invalid.push_back(i);
+        }
+
     }
 };
 

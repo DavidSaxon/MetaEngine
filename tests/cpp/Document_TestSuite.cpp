@@ -370,6 +370,7 @@ public:
 
     virtual bool retrieve(
             const Json::Value* value,
+            const arc::str::UTF8String& key,
             metaengine::Document* requester,
             arc::str::UTF8String& error_message)
     {

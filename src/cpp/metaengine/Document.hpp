@@ -99,6 +99,8 @@ public:
      * return ```true```.
      *
      * \param data The JSON value to attempt to convert to this Visitor's type.
+     * \param key The key that was used to retrieve the given JSON data from the
+     *             Document.
      * \param requester The Document that has called this function and provided
      *                  the JSON data.
      * \param error_message Can be used to return an error message if the
@@ -106,6 +108,7 @@ public:
      */
     virtual bool retrieve(
             const Json::Value* data,
+            const arc::str::UTF8String& key,
             Document* requester,
             arc::str::UTF8String& error_message) = 0;
 
@@ -340,7 +343,7 @@ public:
                 try
                 {
                     retrieve_success =
-                        visitor.retrieve(data, this, retrieve_error);
+                        visitor.retrieve(data, key, this, retrieve_error);
                 }
                 catch(...)
                 {
@@ -399,7 +402,7 @@ public:
             try
             {
                 retrieve_success =
-                    visitor.retrieve(data, this, retrieve_error);
+                    visitor.retrieve(data, key, this, retrieve_error);
             }
             catch(...)
             {
