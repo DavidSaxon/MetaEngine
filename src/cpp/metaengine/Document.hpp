@@ -327,10 +327,8 @@ public:
                     // trigger a warning and prepare to fallback
                     arc::str::UTF8String error_message;
                     error_message << "Falling back to retrieving value from "
-                                  << "memory. Failed to retrieve value from "
-                                  << "file: \"" << m_file_path << "\" with "
-                                  << "error: " << exc.get_type() << ": "
-                                  << exc.what();
+                                  << "memory. " << exc.get_type() << ": "
+                                  << exc.get_message();
                     s_get_reporter(m_file_path, error_message);
                 }
             }
@@ -358,12 +356,12 @@ public:
 
                 // begin building the error message
                 arc::str::UTF8String error_message;
-                error_message << "Failed to retrieve value for key: \"" << key
+                error_message << "Failed to retrieve value for key \"" << key
                               << "\" ";
                 // was there an explicit message from the Visitor?
                 if(!retrieve_error.is_empty())
                 {
-                    error_message << "with error: " << retrieve_error;
+                    error_message << "with message: " << retrieve_error;
                 }
                 else
                 {
@@ -378,9 +376,10 @@ public:
                 else if(s_get_reporter != nullptr)
                 {
                     // trigger a warning and prepare to fallback
-                    error_message << "Falling back to retrieving value from "
-                                  << "memory. " << error_message;
-                    s_get_reporter(m_file_path, error_message);
+                    arc::str::UTF8String report_message;
+                    report_message << "Falling back to retrieving value from "
+                                   << "memory. " << error_message;
+                    s_get_reporter(m_file_path, report_message);
                 }
             }
         }

@@ -50,7 +50,8 @@ bool PathV::retrieve(
     // is the path a list
     if(!data->isArray())
     {
-        error_message << "Data: \"" << data->toStyledString() << "\" cannot be "
+        Json::FastWriter j_writer;
+        error_message << "\"" << j_writer.write(*data) << "\" cannot be "
                       << "converted to array type, which is required to build "
                       << "a path.";
         return false;
@@ -66,7 +67,8 @@ bool PathV::retrieve(
         // check if the data can be converted
         if(!child->isString())
         {
-            error_message << "Path element data: \"" << child->toStyledString()
+            Json::FastWriter j_writer;
+            error_message << "Path element \"" << j_writer.write(*child)
                           << "\" cannot be converted to UTF-8 string type.";
             return false;
         }
@@ -83,17 +85,16 @@ bool PathV::retrieve(
             // ensure this does not reference itself
             if(ref_key == key)
             {
-                error_message << "Failed to expand reference: \"" << element
-                              << "\" since it references itself, this Data "
-                              << "value.";
+                error_message << "Failed to expand reference \"" << element
+                              << "\" since it references itself.";
                 return false;
             }
             // ensure this does reference a key we've already visited
             if(std::find(m_visited_refs.begin(), m_visited_refs.end(), ref_key)
                   != m_visited_refs.end())
             {
-                error_message << "Failed to expand reference: \"" << element
-                              << "\" since it is a a cyclic reference.";
+                error_message << "Failed to expand reference \"" << element
+                              << "\" since it is a cyclic reference.";
                 return false;
             }
 
@@ -119,8 +120,9 @@ bool PathV::retrieve(
                 catch(...)
                 {
                     // set error and exit
-                    error_message << "Failed to expand reference: \""
-                                  << element << "\".";
+                    error_message << "Failed to expand reference \""
+                                  << element << "\" no valid path or string "
+                                  << "exists in the document with that key.";
                     return false;
                 }
             }

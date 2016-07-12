@@ -98,8 +98,9 @@ public:
         // check type
         if(!data->isInt())
         {
-            error_message << "Data: \"" << data->toStyledString() << "\" "
-                          << "cannot be converted to integral type.";
+            Json::FastWriter j_writer;
+            error_message << "\"" << j_writer.write(*data) << "\" cannot be "
+                          << "converted to integral type.";
             return false;
         }
 
@@ -144,8 +145,9 @@ public:
         // check type
         if(!data->isArray())
         {
-            error_message << "Data: \"" << data->toStyledString() << "\" "
-                          << "cannot be converted to array type.";
+            Json::FastWriter j_writer;
+            error_message << "\"" << j_writer.write(*data) << "\" cannot be "
+                          << "converted to array type.";
             return false;
         }
 
@@ -159,9 +161,9 @@ public:
             // check if the data can be converted
             if(!child->isInt())
             {
-                error_message << "Array element data: \""
-                              << child->toStyledString() << "\" cannot be "
-                              << "converted to integral type.";
+                Json::FastWriter j_writer;
+                error_message << "Array element \"" << j_writer.write(*child)
+                              << "\" cannot be converted to integral type.";
                 return false;
             }
             // perform conversion
@@ -209,8 +211,9 @@ public:
         // check type
         if(!data->isDouble())
         {
-            error_message << "Data: \"" << data->toStyledString() << "\" "
-                          << "cannot be converted to floating point type.";
+            Json::FastWriter j_writer;
+            error_message << "\"" << j_writer.write(*data) << "\" cannot be "
+                          << "converted to floating point type.";
             return false;
         }
 
@@ -256,8 +259,9 @@ public:
         // check type
         if(!data->isArray())
         {
-            error_message << "Data: \"" << data->toStyledString() << "\" "
-                          << "cannot be converted to array type.";
+            Json::FastWriter j_writer;
+            error_message << "\"" << j_writer.write(*data) << "\" cannot be "
+                          << "converted to array type.";
             return false;
         }
 
@@ -271,9 +275,10 @@ public:
             // check if the data can be converted
             if(!child->isDouble())
             {
-                error_message << "Array element data: \""
-                              << child->toStyledString() << "\" cannot be "
-                              << "converted to floating point type.";
+                Json::FastWriter j_writer;
+                error_message << "Array element \"" << j_writer.write(*child)
+                              << "\" cannot be converted to floating point "
+                              << "type.";
                 return false;
             }
             // perform conversion

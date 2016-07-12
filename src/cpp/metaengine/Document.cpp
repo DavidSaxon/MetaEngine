@@ -135,9 +135,7 @@ void Document::reload()
             {
                 // no fallback, rethrow
                 arc::str::UTF8String error_message;
-                error_message << "Failed to open file: \"" << m_file_path
-                              << "\" with error: " << exc.get_type() << "\n"
-                              << exc.get_message();
+                error_message << exc.get_message();
                 throw arc::ex::InvalidPathError(error_message);
             }
             else if(s_load_reporter != nullptr)
@@ -145,8 +143,7 @@ void Document::reload()
                 // trigger a warning, and prepare to fallback
                 arc::str::UTF8String error_message;
                 error_message << "Falling back to loading data from memory "
-                              << "only. Failed to open file: \"" << m_file_path
-                              << "\" with error: " << exc.get_type() << "\n"
+                              << "only. " << exc.get_type() << ": "
                               << exc.get_message();
                 s_load_reporter(m_file_path, error_message);
             }
@@ -165,9 +162,8 @@ void Document::reload()
                 {
                     // no fallback, rethrow
                     arc::str::UTF8String error_message;
-                    error_message << "Failed to parse JSON data from file: \""
-                                  << m_file_path.to_native() << "\" with "
-                                  << "message:\n" << exc.what();
+                    error_message << "Failed to parse JSON data from file "
+                                  << "with message:\n" << exc.what();
                     throw arc::ex::ParseError(error_message);
                 }
                 else if(s_load_reporter != nullptr)
@@ -176,8 +172,7 @@ void Document::reload()
                     arc::str::UTF8String error_message;
                     error_message << "Falling back to loading data from memory "
                                   << "only. Failed to parse JSON data from "
-                                  << "file: \"" << m_file_path << "\" with "
-                                  << "message:\n" << exc.what();
+                                  << "file with message:\n" << exc.what();
                     s_load_reporter(m_file_path, error_message);
                 }
             }
@@ -206,10 +201,9 @@ void Document::reload()
             {
                 // trigger a warning
                 arc::str::UTF8String error_message;
-                error_message << "Fallback to memory is not available for "
-                              << "Document using file: \"" << m_file_path
-                              << "\". Memory data failed to load with error: "
-                              << exc.get_type() << ": " << exc.what();
+                error_message << "Fallback to memory not available, Memory "
+                              << "data failed to load with " << exc.get_type()
+                              << ": " << exc.what();
                 s_load_reporter(m_file_path, error_message);
             }
 

@@ -24,7 +24,8 @@ bool UTF8StringV::retrieve(
     // check type
     if(!data->isString())
     {
-        error_message << "Data: \"" << data->toStyledString() << "\" cannot be "
+        Json::FastWriter j_writer;
+        error_message << "\"" << j_writer.write(*data) << "\" cannot be "
                       << "converted to UTF-8 string type.";
         return false;
     }
@@ -52,7 +53,8 @@ bool UTF8StringVectorV::retrieve(
     // check type
     if(!data->isArray())
     {
-        error_message << "Data: \"" << data->toStyledString() << "\" cannot be "
+        Json::FastWriter j_writer;
+        error_message << "\"" << j_writer.write(*data) << "\" cannot be "
                       << "converted to array type.";
         return false;
     }
@@ -67,7 +69,8 @@ bool UTF8StringVectorV::retrieve(
         // check if the data can be converted
         if(!child->isString())
         {
-            error_message << "Array element data: \"" << child->toStyledString()
+            Json::FastWriter j_writer;
+            error_message << "Array element \"" << j_writer.write(*child)
                           << "\" cannot be converted to UTF-8 string type.";
             return false;
         }

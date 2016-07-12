@@ -22,7 +22,8 @@ bool BoolV::retrieve(
     // check type
     if(!data->isBool())
     {
-        error_message << "Data: \"" << data->toStyledString() << "\" cannot be "
+        Json::FastWriter j_writer;
+        error_message << "\"" << j_writer.write(*data) << "\" cannot be "
                       << "converted to boolean type.";
         return false;
     }
@@ -50,7 +51,8 @@ bool BoolVectorV::retrieve(
     // check type
     if(!data->isArray())
     {
-        error_message << "Data: \"" << data->toStyledString() << "\" cannot be "
+        Json::FastWriter j_writer;
+        error_message << "\"" << j_writer.write(*data) << "\" cannot be "
                       << "converted to array type.";
         return false;
     }
@@ -65,7 +67,8 @@ bool BoolVectorV::retrieve(
         // check if the data can be converted
         if(!child->isBool())
         {
-            error_message << "Array element data: \"" << child->toStyledString()
+            Json::FastWriter j_writer;
+            error_message << "Array element \"" << j_writer.write(*child)
                           << "\" cannot be converted to boolean type.";
             return false;
         }
