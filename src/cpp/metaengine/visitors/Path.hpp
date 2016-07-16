@@ -27,6 +27,18 @@ namespace metaengine
  *     "other_path": ["another", "path"]
  * }
  * \endcode
+ *
+ * There is also some extended functionality to reference keys from an external
+ * document. Where the external document must be provided to the Visitor and
+ * the ```#{<other_ley>}``` syntax is used.
+ *
+ * Example:
+ *
+ * \code
+ * {
+ *     "my_path":  ["example", "path", "#{key_in_another_document}"]
+ * }
+ * \endcode
  */
 class PathV : public metaengine::Visitor<arc::io::sys::Path>
 {
@@ -36,7 +48,13 @@ public:
     //                                CONSTRUCTOR
     //--------------------------------------------------------------------------
 
-    PathV();
+    /*!
+     * \brief Constructs a new Path Visitor.
+     *
+     * \param external_document Pointer to a metaengine::Document to resolve
+     *                          external references from.
+     */
+    PathV(metaengine::Document* external_document = nullptr);
 
     //--------------------------------------------------------------------------
     //                          PUBLIC STATIC FUNCTIONS
@@ -44,8 +62,12 @@ public:
 
     /*!
      * \brief Provides an existing static instance of this object.
+     *
+     * \param external_document Pointer to a metaengine::Document which the
+     *                          returned Visitor will use to resolve external
+     *                          references.
      */
-    static PathV& instance();
+    static PathV& instance(metaengine::Document* external_document = nullptr);
 
     //--------------------------------------------------------------------------
     //                          PUBLIC MEMBER FUNCTIONS
@@ -58,11 +80,29 @@ public:
             Document* requester,
             arc::str::UTF8String& error_message);
 
+    /*!
+     * \brief Returns a pointer to the metaengine::Document which this Visitor
+     *        is using to resolve external references.
+     */
+    metaengine::Document* get_external_document() const;
+
+    /*!
+     * \brief Sets the metaengine::Document that will be used by this Visitor to
+     *        resolve external references.
+     */
+    void set_external_document(metaengine::Document* external_document);
+
 private:
 
     //--------------------------------------------------------------------------
     //                             PRIVATE ATTRIBUTES
     //--------------------------------------------------------------------------
+
+    /*!
+     * \brief Pointer to a Document that can be used to resolve external
+     *        references.
+     */
+    metaengine::Document* m_external;
 
     /*!
      * \brief Whether this Document is created as part of recursive path

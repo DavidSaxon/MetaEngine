@@ -212,4 +212,88 @@ ARC_TEST_UNIT_FIXTURE(path_v, PathVFixture)
     }
 }
 
+//------------------------------------------------------------------------------
+//                              EXTERNAL REFERENCES
+//------------------------------------------------------------------------------
+
+class ExternalReferenceFixture : public arc::test::Fixture
+{
+public:
+
+    //----------------------------PUBLIC ATTRIBUTES-----------------------------
+
+    arc::str::UTF8String base;
+    arc::str::UTF8String valid;
+    arc::str::UTF8String invalid;
+
+    arc::io::sys::Path result_1;
+    arc::io::sys::Path result_2;
+
+    //-------------------------PUBLIC MEMBER FUNCTIONS--------------------------
+
+    virtual void setup()
+    {
+        base =
+            "{"
+            "   \"direct\": [\"base\", \"path\", \"#{ext_ref_1}\", \"#{ext_ref_2}\"],"
+            "   \"indirect\": [\"dir\", \"@{direct}\"]"
+            "}";
+        valid =
+            "{"
+            "   \"ext_ref_1\": \"ext\","
+            "   \"ext_ref_2\": [\"ext\", \"path\"]"
+            "}";
+        invalid =
+            "{"
+            "   \"ext_ref_2\": [\"ext\", \"path\"]"
+            "}";
+
+        result_1 << "base" << "path" << "ext" << "ext" << "path";
+        result_2 << "dir" << "base" << "path" << "ext" << "ext" << "path";
+    }
+};
+
+ARC_TEST_UNIT_FIXTURE(external_reference, ExternalReferenceFixture)
+{
+    ARC_TEST_MESSAGE("Checking with no external document");
+    {
+        metaengine::Document doc(&fixture->base);
+        ARC_CHECK_THROW(
+            *doc.get("direct", metaengine::PathV::instance()),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_THROW(
+            *doc.get("indirect", metaengine::PathV::instance()),
+            arc::ex::TypeError
+        );
+    }
+    ARC_TEST_MESSAGE("Checking valid");
+    {
+        metaengine::Document doc(&fixture->base);
+        metaengine::Document ext_doc(&fixture->valid);
+        ARC_CHECK_EQUAL(
+            *doc.get("direct", metaengine::PathV::instance(&ext_doc)),
+            fixture->result_1
+        );
+        ARC_CHECK_EQUAL(
+            *doc.get("indirect", metaengine::PathV::instance(&ext_doc)),
+            fixture->result_2
+        );
+    }
+    ARC_TEST_MESSAGE("Checking invalid");
+    {
+        metaengine::Document doc(&fixture->base);
+        metaengine::Document ext_doc(&fixture->invalid);
+        ARC_CHECK_THROW(
+            *doc.get("direct", metaengine::PathV::instance(&ext_doc)),
+            arc::ex::TypeError
+        );
+        ARC_CHECK_THROW(
+            *doc.get("indirect", metaengine::PathV::instance(&ext_doc)),
+            arc::ex::TypeError
+        );
+    }
+
+}
+
 } // namespace anonymous

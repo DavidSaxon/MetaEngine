@@ -256,7 +256,8 @@ const Json::Value* Document::get_value(
         if(value->isNull())
         {
             arc::str::UTF8String error_message;
-            error_message << "No value exists with the key: " << key_so_far;
+            error_message << "No value exists with the key \"" << key_so_far
+                          << "\".";
             throw arc::ex::KeyError(error_message);
         }
         key_so_far += ".";
