@@ -151,7 +151,7 @@ public:
      * \brief Opens the FileHandle to the internal path.
      *
      * \throws arc::ex::StateError If this FileHandle is already open.
-     * \throws arc::ex::InvalidPathError If the path cannot be opened.
+     * \throws arc::ex::IOError If the path cannot be opened.
      */
     virtual void open() = 0;
 
@@ -168,7 +168,7 @@ public:
      * \param path The path to the file to use.
      *
      * \throws arc::ex::StateError If this FileHandle is already open.
-     * \throws arc::ex::InvalidPathError If the path cannot be opened.
+     * \throws arc::ex::IOError If the path cannot be opened.
      */
     virtual void open(const arc::io::sys::Path& path);
 

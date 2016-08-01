@@ -76,7 +76,7 @@ public:
      * \param newline The newline symbol used in the file to read.
      *                See set_newline().
      *
-     * \throws arc::ex::InvalidPathError If the path cannot be opened.
+     * \throws arc::ex::IOError If the path cannot be opened.
      */
     FileReader(
             const arc::io::sys::Path& path,
@@ -117,7 +117,7 @@ public:
      * \brief Opens this FileReader to the internal path.
      *
      * \throws arc::ex::StateError If this FileReader is already open.
-     * \throws arc::ex::InvalidPathError If the path cannot be opened.
+     * \throws arc::ex::IOError If the path cannot be opened.
      */
     virtual void open();
 

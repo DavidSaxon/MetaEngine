@@ -115,7 +115,7 @@ ARC_TEST_UNIT_FIXTURE(load_file_path, LoadFilePathFixture)
     ARC_TEST_MESSAGE("Checking loading invalid file paths");
     ARC_CONST_FOR_EACH(it, fixture->invalid_paths)
     {
-        ARC_CHECK_THROW(metaengine::Document(*it), arc::ex::InvalidPathError);
+        ARC_CHECK_THROW(metaengine::Document(*it), arc::ex::IOError);
     }
 
     ARC_TEST_MESSAGE("Checking loading non-JSON files");

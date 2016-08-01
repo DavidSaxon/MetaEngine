@@ -136,7 +136,7 @@ void Document::reload()
                 // no fallback, rethrow
                 arc::str::UTF8String error_message;
                 error_message << exc.get_message();
-                throw arc::ex::InvalidPathError(error_message);
+                throw arc::ex::IOError(error_message);
             }
             else if(s_load_reporter != nullptr)
             {

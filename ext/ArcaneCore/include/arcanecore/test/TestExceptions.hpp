@@ -62,20 +62,6 @@ public:
     }
 };
 
-/*!
- * \brief Warns that an invalid test path has been provided to run.
- */
-class InvalidPathError : public TestError
-{
-public:
-
-    InvalidPathError(const arc::str::UTF8String& message)
-        :
-        TestError("InvalidPathError", message)
-    {
-    }
-};
-
 } // namespace ex
 } // namespace test
 } // namespace arc

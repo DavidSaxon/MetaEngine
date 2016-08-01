@@ -102,7 +102,7 @@ std::vector< arc::io::sys::Path> list_rec(
 /*!
  * \brief Attempts to create the directory at the given path.
  *
- * \throws arc::ex::InvalidPathError If directory creation was attempted
+ * \throws arc::ex::IOError If directory creation was attempted
  *                                          but failed.
  *
  * \return True is a new directory was created, false if the directory already
@@ -119,7 +119,7 @@ bool create_directory(const arc::io::sys::Path& path);
  * \note This operation will delete symbolic link objects but will not follow
  *       them to delete the path they point to.
  *
- * \throws arc::ex::InvalidPathError If the path cannot be accessed
+ * \throws arc::ex::IOError If the path cannot be accessed
  *                                          and/or modified to be deleted.
  */
 void delete_path(const arc::io::sys::Path& path);
@@ -134,7 +134,7 @@ void delete_path(const arc::io::sys::Path& path);
  * \note This operation will delete symbolic link objects but will not follow
  *       them to delete the path they point to.
  *
- * \throws arc::ex::InvalidPathError If a path in the directory hierarchy
+ * \throws arc::ex::IOError If a path in the directory hierarchy
  *                                          cannot be accessed and/or modified
  *                                          to be deleted.
  */
@@ -163,7 +163,7 @@ void delete_path_rec(const arc::io::sys::Path& path);
  *
  * \endcode
  *
- * \throws arc::ex::InvalidPathError If one of the directories in the
+ * \throws arc::ex::IOError If one of the directories in the
  *                                          path was attempted to be created but
  *                                          failed.
  */

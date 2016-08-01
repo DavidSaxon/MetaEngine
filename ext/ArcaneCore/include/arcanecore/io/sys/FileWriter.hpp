@@ -81,7 +81,7 @@ public:
      * \param newline The newline symbol that will be used to write lines to the
      *                file.
      *
-     * \throws arc::ex::InvalidPathError If the path cannot be opened.
+     * \throws arc::ex::IOError If the path cannot be opened.
      */
     FileWriter(
             const arc::io::sys::Path& path,
@@ -140,7 +140,7 @@ public:
      *       relevant Unicode BOM to be written to the start of the file.
      *
      * \throws arc::ex::StateError If this FileWriter is already open.
-     * \throws arc::ex::InvalidPathError If the path cannot be opened.
+     * \throws arc::ex::IOError If the path cannot be opened.
      */
     virtual void open();
 

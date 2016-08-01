@@ -170,7 +170,7 @@ public:
      * \param file_path Path to a JSON file to load this Document's internal
      *                  data from.
      *
-     * \throw arc::ex::InvalidPathError If the file path cannot be accessed to
+     * \throw arc::ex::IOError If the file path cannot be accessed to
      *                                  load data from.
      * \throw arc::ex::ParseError If the file does not contain valid JSON data.
      */
@@ -287,7 +287,7 @@ public:
      * \note Even if loading from the file failed the previous time this
      *       Document was loaded it will be reattempted by this function.
      *
-     * \throw arc::ex::InvalidPathError If this Document is using a file path
+     * \throw arc::ex::IOError If this Document is using a file path
      *                                  and the file cannot be accessed and
      *                                  there is no memory source provided.
      * \throw arc::ex::ParseError If the file and/or memory does not contain

@@ -228,7 +228,7 @@ public:
             TestCore::declare_unit(path, unit_test, file, line);
         }
         // invalid pass errors are handled by main
-        catch (const arc::test::ex::InvalidPathError& e)
+        catch (const arc::ex::IOError& e)
         {
             throw e;
         }

@@ -334,16 +334,15 @@ public:
 //------------------------------------------------------------------------------
 
 /*!
- * \brief Warns that given path cannot be accessed and/or modified because it
- *        does not exist permission is denied.
+ * \brief Warns of an error accessing the file system.
  */
-class InvalidPathError : public ArcException
+class IOError : public ArcException
 {
 public:
 
-    InvalidPathError(const arc::str::UTF8String& message)
+    IOError(const arc::str::UTF8String& message)
         :
-        ArcException("InvalidPathError", message)
+        ArcException("IOError", message)
     {
     }
 };
