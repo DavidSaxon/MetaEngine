@@ -94,7 +94,7 @@ public:
     //                                 DESTRUCTOR
     //--------------------------------------------------------------------------
 
-    ~FileReader();
+    virtual ~FileReader();
 
     //--------------------------------------------------------------------------
     //                                 OPERATORS
@@ -160,7 +160,7 @@ public:
      *
      * \throws arc::ex::StateError If this FileReader is not open.
      */
-    bool eof() const;
+    virtual bool eof() const;
 
     /*!
      * \brief Returns whether this file starts with a Unicode Byte Order Marker.
@@ -207,7 +207,7 @@ public:
      * \throws arc::ex::StateError If this FileReader is not open.
      * \throws arc::ex::EOFError If the End of File Marker has been reached.
      */
-    void read(char* data, arc::int64 length);
+    virtual void read(char* data, arc::int64 length);
 
     /*!
      * \brief Reads a block of data from the file and returns it (converting
@@ -230,7 +230,7 @@ public:
      * \throws arc::ex::StateError If this FileReader is not open.
      * \throws arc::ex::EOFError If the End of File Marker has been reached.
      */
-    void read(arc::str::UTF8String& data, arc::int64 length = -1);
+    virtual void read(arc::str::UTF8String& data, arc::int64 length = -1);
 
     /*!
      * \brief Reads a line of data from the file, allocates the memory to hold
@@ -286,10 +286,10 @@ public:
      */
     void read_line(arc::str::UTF8String& data);
 
-private:
+protected:
 
     //--------------------------------------------------------------------------
-    //                             PRIVATE ATTRIBUTES
+    //                            PROTECTED ATTRIBUTES
     //--------------------------------------------------------------------------
 
     /*!
@@ -307,6 +307,29 @@ private:
      *        FileReader's encoding and newline symbol.
      */
     bool m_newline_checker_valid;
+
+    //--------------------------------------------------------------------------
+    //                         PROTECTED MEMBER FUNCTIONS
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief Attempts to detect the current file's encoding mode.
+     */
+    Encoding detect_encoding();
+
+    /*!
+     * \brief If the FileReader is closed this function will throw a
+     *        arc::ex::IOError, or if the FileReader is at the end of the file
+     *        a arc::ex::EOFError will be thrown.
+     */
+    void check_can_read();
+
+private:
+
+    //--------------------------------------------------------------------------
+    //                             PRIVATE ATTRIBUTES
+    //--------------------------------------------------------------------------
+
     /*!
      * \brief The newline checker being used by this file handle.
      *
@@ -325,12 +348,6 @@ private:
      * This function will initialise the checker if need be.
      */
     NewlineChecker* get_newline_checker();
-
-    /*!
-     * \brief Checks and throws common exception as to whether the file can be
-     *        read from.
-     */
-    void check_can_read();
 };
 
 } // namespace sys
