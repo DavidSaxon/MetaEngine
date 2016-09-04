@@ -11,7 +11,22 @@ namespace metaengine
 {
 
 /*!
- * \brief TODO:
+ * \brief A derived implementation of Document which supports loading meta data
+ *        from multiple variants of a file path.
+ *
+ * A Variant can contain up to three versions of the data, one loaded from the
+ * current variant of the file, one loaded from the default variant of the file,
+ * and possibly one loaded from memory. It will by default to retrieve values
+ * from the current variant, but if this fails it will fallback retrieving from
+ * default variant, and finally if this also fails it will fallback to
+ * retrieving the value from the data loaded from memory.
+ *
+ * File path variants are applied by inserting the variant string as a secondary
+ * extension in the file path. For example if the file path
+ * was ```path/to/my/file.json``` the and the variant was ```"variant"``` it
+ * would be applied like so: ```path/to/my/file.variant.json```.
+ * However if the file has no extension e.g. ```path/to/my/file``` the variant
+ * will be applied as the extension: ```path/to/my/file.variant```
  */
 class Variant : public Document
 {
@@ -22,10 +37,19 @@ public:
     //--------------------------------------------------------------------------
 
     /*!
-     * \brief Creates a new Variant Document that loads it's internal data from
+     * \brief Creates a new Variant Document that loads its internal data from
      *        variant files.
      *
-     * TODO:
+     * \param file_path Base path without any variants applied which will be
+     *                  used to load the internal data of this variant.
+     * \param default_variant The variant which will be both loaded as the
+     *                        initial variant and used as the data to fallback
+     *                        to if the current variant cannot be used.
+     * \param load_immediately Whether constructing the Document will also load
+     *                         the internal data. This is the same as
+     *                         constructing the Document with load_immediately
+     *                         set the to ```false``` and then calling reload
+     *                         immediately after.
      */
     Variant(
             const arc::io::sys::Path& file_path,
@@ -33,7 +57,23 @@ public:
             bool load_immediately = true);
 
     /*!
-     * \brief TODO:
+     * \brief Creates a new Variant Document that loads its internal data from
+     *        both variant file data and data in memory.
+     *
+     * \param file_path Base path without any variants applied which will be
+     *                  used to load the internal data of this variant.
+     *                  Document's internal data from.
+     * \param memory Pointer to a arc::str::UTF8String that will contain JSON to
+     *               load the tertiary fallback of this Document's internal data
+     *               from.
+     * \param default_variant The variant which will be both loaded as the
+     *                        initial variant and used as the data to fallback
+     *                        to if the current variant cannot be used.
+     * \param load_immediately Whether constructing the Document will also load
+     *                         the internal data. This is the same as
+     *                         constructing the Document with load_immediately
+     *                         set the to ```false``` and then calling reload
+     *                         immediately after.
      */
     Variant(
             const arc::io::sys::Path& file_path,
@@ -57,7 +97,10 @@ public:
     virtual void reload();
 
     /*!
-     * \brief TODO:
+     * \brief Sets the current variant to use for this Document.
+     *
+     * This function will cause this object to load the relevant variant data
+     * into its variant
      */
     void set_variant(const arc::str::UTF8String& variant);
 

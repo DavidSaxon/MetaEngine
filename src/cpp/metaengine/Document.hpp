@@ -29,7 +29,7 @@ namespace metaengine
 /*!
  * \brief Object that is used to load and store MetaEngine data from JSON.
  *
- * A Document can contain up to two versions of the Data, one loaded from a
+ * A Document can contain up to two versions of the data, one loaded from a
  * file, and another loaded from memory. This means if the data from the file
  * is invalid, the Document can fallback to using the data loaded from memory.
  */
@@ -116,8 +116,8 @@ public:
      * \param file_path Path to a JSON file to load the first version of this
      *                  Document's internal data from.
      * \param memory Pointer to a arc::str::UTF8String that will contain JSON to
-     *               load the second version of this Document's internal data
-     *               from.
+     *               load the secondary fallback of this Document's internal
+     *               data from.
      * \param load_immediately Whether constructing the Document will also load
      *                         the internal data. This is the same as
      *                         constructing the Document with load_immediately

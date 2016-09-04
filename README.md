@@ -176,3 +176,67 @@ void init_meta()
     ...
 }
 ```
+MetaEngine also supports an extended implementation of the
+metaengine::Document object: metaengine::Variant. Variants work much the same
+way as Documents except they take a base file path, and variants of this
+file path are used to access data. The metaengine::Variant has a default
+variant which is always loaded, and a current variant which may or may not be
+the default variant. Data will first be attempted to be retrieved from the
+current file path variant, if this fails it will try access the data from the
+default variant, and finally if this fails and the metaengine::Variant has
+data loaded from memory it will attempt to access it from here. Variants are
+intended to be used to support multiple language representations of string
+data, but can be used for any other relevant use.
+
+For example we have a file called ```meta/lang.uk.json``` which contains the
+data:
+
+```
+{
+    "string": "hello_world",
+    "sentence": "This is a language variant."
+}
+```
+
+And another file called ```meta/lang.de.json``` which contains the data:
+
+```
+{
+    "string": "hallo_welt"
+}
+```
+
+
+We will use the uk variant as the default which will cause it to be loaded
+initially:
+
+```
+// we leave uk and de out of the file path since these are variants
+arc::io::sys::Path base_path;
+base_path << "meta" << "lang.json";
+
+// using uk as the default variant which will load from meta/lang.uk.json
+metaengine::Variant lang_var(base_path, "uk");
+
+// returns "hello_world"
+*lang_var.get("string", metaengine::UTF8StringV::instance()));
+// returns "This is a language variant."
+*lang_var.get("sentence", metaengine::UTF8StringV::instance()));
+```
+
+The metaengine::Variant::set_variant function can be used to change the
+current variant (which is currently the default variant: "uk"). Changing the
+current variant will cause the new file variant to be loaded, however the
+default variant will remain loaded and will be used to fallback to if data
+cannot be accessed from the current variant:
+
+```
+// changing to the de variant will load data from meta/lang.de.json
+lang_var.set_variant("de");
+
+// returns "hallo_welt"
+*lang_var.get("string", metaengine::UTF8StringV::instance()));
+// returns "This is a language variant." from the uk variant since the
+// "sentence" key doesn't exist in the de variant file.
+*lang_var.get("sentence", metaengine::UTF8StringV::instance()));
+```
