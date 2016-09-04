@@ -7,6 +7,7 @@
 #define METAENGINE_VISITORS_STRING_HPP_
 
 #include "metaengine/Document.hpp"
+#include "metaengine/Visitor.hpp"
 
 namespace metaengine
 {

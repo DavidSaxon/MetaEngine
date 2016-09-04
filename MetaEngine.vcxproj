@@ -21,6 +21,7 @@
   <ItemGroup Condition="'$(Configuration)'=='Lib'">
     <ClCompile Include="src\cpp\json\jsoncpp.cpp" />
     <ClCompile Include="src\cpp\metaengine\Document.cpp" />
+    <ClCompile Include="src\cpp\metaengine\Variant.cpp" />
     <ClCompile Include="src\cpp\metaengine\visitors\Path.cpp" />
     <ClCompile Include="src\cpp\metaengine\visitors\Primitive.cpp" />
     <ClCompile Include="src\cpp\metaengine\visitors\String.cpp" />
@@ -28,6 +29,7 @@
   <ItemGroup Condition="'$(Configuration)'=='tests'">
     <ClCompile Include="tests\cpp\TestsMain.cpp" />
     <ClCompile Include="tests\cpp\Document_TestSuite.cpp" />
+    <ClCompile Include="tests\cpp\Variant_TestSuite.cpp" />
     <ClCompile Include="tests\cpp\visitors\Path_TestSuite.cpp" />
     <ClCompile Include="tests\cpp\visitors\Primitive_TestSuite.cpp" />
     <ClCompile Include="tests\cpp\visitors\String_TestSuite.cpp" />

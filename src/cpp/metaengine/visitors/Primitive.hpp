@@ -9,6 +9,7 @@
 #include <json/json.h>
 
 #include "metaengine/Document.hpp"
+#include "metaengine/Visitor.hpp"
 
 namespace metaengine
 {

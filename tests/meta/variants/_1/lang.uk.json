@@ -1,0 +1,10 @@
+{
+    "hello_world": "Hello world!",
+    "number": 12,
+    "sentence": "This is a language variant.",
+    "nest":
+    {
+        "string": "twelve",
+        "number": 3
+    }
+}

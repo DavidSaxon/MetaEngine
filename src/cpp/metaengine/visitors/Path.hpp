@@ -7,6 +7,7 @@
 #include <arcanecore/io/sys/Path.hpp>
 
 #include "metaengine/Document.hpp"
+#include "metaengine/Visitor.hpp"
 
 namespace metaengine
 {

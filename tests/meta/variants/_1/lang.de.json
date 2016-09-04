@@ -1,0 +1,8 @@
+{
+    "hello_world": "Hallo Welt!",
+    "number": 1337,
+    "nest":
+    {
+        "string": "zwölf"
+    }
+}

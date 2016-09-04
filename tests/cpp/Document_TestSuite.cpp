@@ -8,9 +8,6 @@ ARC_TEST_MODULE(Document)
 
 #include <metaengine/Document.hpp>
 
-// TODO: REMOVE ME
-#include <metaengine/visitors/Primitive.hpp>
-
 namespace
 {
 

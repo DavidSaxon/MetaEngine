@@ -19,7 +19,9 @@ Document::fallback_reporter Document::s_get_reporter = nullptr;
 //                                  CONSTRUCTORS
 //------------------------------------------------------------------------------
 
-Document::Document(const arc::io::sys::Path& file_path)
+Document::Document(
+        const arc::io::sys::Path& file_path,
+        bool load_immediately)
     :
     m_file_path (file_path),
     m_using_path(true),
@@ -27,22 +29,31 @@ Document::Document(const arc::io::sys::Path& file_path)
     m_file_root (nullptr),
     m_mem_root  (nullptr)
 {
-    reload();
+    if(load_immediately)
+    {
+        reload();
+    }
 }
 
-Document::Document(const arc::str::UTF8String* memory)
+Document::Document(
+        const arc::str::UTF8String* memory,
+        bool load_immediately)
     :
     m_using_path(false),
     m_memory    (memory),
     m_file_root (nullptr),
     m_mem_root  (nullptr)
 {
-    reload();
+    if(load_immediately)
+    {
+        reload();
+    }
 }
 
 Document::Document(
         const arc::io::sys::Path& file_path,
-        const arc::str::UTF8String* memory)
+        const arc::str::UTF8String* memory,
+        bool load_immediately)
     :
     m_file_path (file_path),
     m_using_path(true),
@@ -50,7 +61,10 @@ Document::Document(
     m_file_root (nullptr),
     m_mem_root  (nullptr)
 {
-    reload();
+    if(load_immediately)
+    {
+        reload();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -214,6 +228,136 @@ void Document::reload()
 //------------------------------------------------------------------------------
 //                            PRIVATE MEMBER FUNCTIONS
 //------------------------------------------------------------------------------
+
+VisitorBase* Document::get(
+        const arc::str::UTF8String& key,
+        VisitorBase* visitor)
+{
+    // attempt to retrieve from the file system first
+    if(m_file_root != nullptr)
+    {
+        const Json::Value* data = nullptr;
+        try
+        {
+            data = get_value(m_file_root.get(), key);
+        }
+        catch(const arc::ex::KeyError& exc)
+        {
+            // rethrow if there's no memory fallback
+            if(m_mem_root == nullptr)
+            {
+                throw exc;
+            }
+            else if(s_get_reporter != nullptr)
+            {
+                // trigger a warning and prepare to fallback
+                arc::str::UTF8String error_message;
+                error_message << "Falling back to retrieving value from "
+                              << "memory. " << exc.get_type() << ": "
+                              << exc.get_message();
+                s_get_reporter(m_file_path, error_message);
+            }
+        }
+
+        // if we got data hand off to the visitor
+        if(data != nullptr)
+        {
+            bool retrieve_success = false;
+            arc::str::UTF8String retrieve_error;
+            try
+            {
+                retrieve_success =
+                    visitor->retrieve(data, key, this, retrieve_error);
+            }
+            catch(...)
+            {
+                retrieve_success = false;
+            }
+
+            // if everything was successful we're done
+            if(retrieve_success)
+            {
+                return visitor;
+            }
+
+            // begin building the error message
+            arc::str::UTF8String error_message;
+            error_message << "Failed to retrieve value for key \"" << key
+                          << "\" ";
+            // was there an explicit message from the Visitor?
+            if(!retrieve_error.is_empty())
+            {
+                error_message << "with message: " << retrieve_error;
+            }
+            else
+            {
+                error_message << "as the requested type.";
+            }
+
+            // throw if there's no memory fallback
+            if(m_mem_root == nullptr)
+            {
+                throw arc::ex::TypeError(error_message);
+            }
+            else if(s_get_reporter != nullptr)
+            {
+                // trigger a warning and prepare to fallback
+                arc::str::UTF8String report_message;
+                report_message << "Falling back to retrieving value from "
+                               << "memory. " << error_message;
+                s_get_reporter(m_file_path, report_message);
+            }
+        }
+    }
+
+    // attempt to retrieve from memory if anything above failed
+    if(m_mem_root != nullptr)
+    {
+        const Json::Value* data = nullptr;
+        // attempt to get the data from the JSON root, if this fails we
+        // just let it throw out of this function
+        data = get_value(m_mem_root.get(), key);
+        // if the above function didn't throw, the data should never be
+        // null
+        assert(data != nullptr);
+
+        // hand off to the visitor
+        bool retrieve_success = false;
+        arc::str::UTF8String retrieve_error;
+        try
+        {
+            retrieve_success =
+                visitor->retrieve(data, key, this, retrieve_error);
+        }
+        catch(...)
+        {
+            retrieve_success = false;
+        }
+
+        // if everything was successful we're done
+        if(retrieve_success)
+        {
+            return visitor;
+        }
+
+        // throw
+        arc::str::UTF8String error_message;
+        error_message << "Failed to retrieve value for key: \""
+                      << key << "\" ";
+        if(!retrieve_error.is_empty())
+        {
+            error_message << "with error: " << retrieve_error;
+        }
+        else
+        {
+            error_message << "as the requested type.";
+        }
+        throw arc::ex::TypeError(error_message);
+
+    }
+
+    return visitor;
+}
 
 void Document::parse(
         const arc::str::UTF8String& json_data,
