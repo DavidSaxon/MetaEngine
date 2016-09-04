@@ -151,7 +151,7 @@ VisitorBase* Variant::get(
         {
             data = get_value(m_variant_root.get(), key);
         }
-        catch(const arc::ex::KeyError& exc)
+        catch(...)
         {
             data = nullptr;
         }
