@@ -1,7 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="tests\cxx\TestsMain.cpp" />
-    <ClCompile Include="tests\cxx\Data_TestSuite.cpp" />
+    <ClCompile Include="tests\cpp\TestsMain.cpp" />
+    <ClCompile Include="tests\cpp\Document_TestSuite.cpp" />
+    <ClCompile Include="tests\cpp\Variant_TestSuite.cpp" />
+    <ClCompile Include="tests\cpp\visitors\Path_TestSuite.cpp" />
+    <ClCompile Include="tests\cpp\visitors\Primitive_TestSuite.cpp" />
+    <ClCompile Include="tests\cpp\visitors\String_TestSuite.cpp" />
   </ItemGroup>
 </Project>

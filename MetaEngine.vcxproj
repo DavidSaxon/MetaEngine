@@ -125,7 +125,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ArcaneCore\include;D:\Dropbox\Development\MetaEngine\MetaEngine\ext\jsoncpp;D:\Dropbox\Development\MetaEngine\MetaEngine\src\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Dropbox\Development\ArcaneCore\ArcaneCore\src\cpp;D:\Dropbox\Development\MetaEngine\MetaEngine\ext\jsoncpp;D:\Dropbox\Development\MetaEngine\MetaEngine\src\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -142,13 +142,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ArcaneCore\include;D:\Dropbox\Development\MetaEngine\MetaEngine\src\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Dropbox\Development\ArcaneCore\ArcaneCore\src\cpp;D:\Dropbox\Development\MetaEngine\MetaEngine\src\cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\build\win_x86;D:\Dropbox\Development\MetaEngine\MetaEngine\ext\ArcaneCore\lib\win_x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Dropbox\Development\MetaEngine\MetaEngine\build\win_x86;D:\Dropbox\Development\ArcaneCore\ArcaneCore\build\win_x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>arcanecore_test.lib;arcanecore_base.lib;arcanecore_io.lib;metaengine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
