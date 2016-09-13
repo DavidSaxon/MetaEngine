@@ -152,7 +152,6 @@ public:
      *                                          greater than the number of bytes
      *                                          in the file or is less than 0.
      */
-
     virtual void seek(arc::int64 index);
 
     /*!

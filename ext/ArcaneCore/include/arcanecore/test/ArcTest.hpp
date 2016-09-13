@@ -240,6 +240,10 @@ public:
         }
     }
 
+    //--------------------------------DESTRUCTOR--------------------------------
+
+    ~TestCore();
+
     //-------------------------STATIC VARIABLE GETTERS--------------------------
 
     static TestLogger& logger()
@@ -457,7 +461,7 @@ private:
     {                                                                          \
         fixture_type* fixture;                                                 \
         name() : UnitTest(#name), fixture(nullptr){}                           \
-        virtual ~name(){ delete fixture; }                                     \
+        virtual ~name(){delete fixture;}                                       \
         virtual arc::test::Fixture* get_fixture()                              \
         {                                                                      \
             if(fixture == nullptr)                                             \

@@ -29,14 +29,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++0x -Wall -Wno-varargs")
 
 include_directories(
 	${INCLUDE_DIRECTORIES}
-	${CMAKE_BINARY_DIR}/ext/ArcaneCore/include/
+    /home/david/Dropbox/Development/ArcaneCore/ArcaneCore/src/cpp
 	src/cpp/
 	tests/cpp/
 )
 
 link_directories(
 	${LINK_DIRECTORIES}
-	${CMAKE_BINARY_DIR}/ext/ArcaneCore/lib/linux_x86
+    /home/david/Dropbox/Development/ArcaneCore/ArcaneCore/build/linux_x86
 	${CMAKE_BINARY_DIR}/build/linux_x86
 )
 
