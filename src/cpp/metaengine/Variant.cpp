@@ -192,6 +192,12 @@ arc::io::sys::Path Variant::apply_variant(
         const arc::io::sys::Path& file_path,
         const arc::str::UTF8String& variant)
 {
+    // is the variant empty? then just return the original path
+    if(variant.is_empty())
+    {
+        return file_path;
+    }
+
     // extract the filename from the path
     arc::io::sys::Path ret(file_path);
     arc::str::UTF8String filename(ret.get_back());
