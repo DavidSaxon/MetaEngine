@@ -117,4 +117,31 @@ private:
     std::vector<arc::str::UTF8String> m_visited_refs;
 };
 
+//------------------------------------------------------------------------------
+//                              PATH VECTOR VISITOR
+//------------------------------------------------------------------------------
+
+/*!
+ * \brief Visitor object used to retrieve a vector of arc::io::sys::Path objects
+ *        from metaengine::Document.
+ *
+ * See PathV for details.
+ */
+class PathVectorV : public metaengine::Visitor<std::vector<arc::io::sys::Path>>
+{
+public:
+
+    /*!
+     * \brief Provides an existing static instance of this object.
+     */
+    static PathVectorV& instance();
+
+    // override
+    virtual bool retrieve(
+            const Json::Value* data,
+            const arc::str::UTF8String& key,
+            Document* requester,
+            arc::str::UTF8String& error_message);
+};
+
 } // namespace metaengine

@@ -42,8 +42,8 @@ public:
 //------------------------------------------------------------------------------
 
 /*!
- * \brief Visitor object used to retrieve a vector of primitive
- *        arc::str::UTF8String from a metaengine::Document.
+ * \brief Visitor object used to retrieve a vector of arc::str::UTF8String
+ *        objects from a metaengine::Document.
  */
 class UTF8StringVectorV :
     public metaengine::Visitor<std::vector<arc::str::UTF8String>>

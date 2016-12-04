@@ -6,6 +6,9 @@
 
 #include <json/json.h>
 
+// TODO: REMOVE ME
+#include <iostream>
+
 namespace metaengine
 {
 
@@ -153,34 +156,17 @@ VisitorBase* Variant::get(
         }
         catch(...)
         {
+            // the key couldn't be found
             data = nullptr;
         }
-
-        // did we get the value?
-        if(data != nullptr)
+        if (data != nullptr)
         {
-            // use the visitor to retrieve from the value
-            bool retrieve_success = false;
-            arc::str::UTF8String unused;
-            try
-            {
-                retrieve_success =
-                    visitor->retrieve(data, key, this, unused);
-            }
-            catch(...)
-            {
-                retrieve_success = false;
-            }
-
-            // if everything was successful we're done
-            if(retrieve_success)
-            {
-                return visitor;
-            }
+            // hand off to the base implementation with data
+            return Document::get(data, key, visitor);
         }
     }
 
-    // hand off to the super implementation
+    // hand off to the base implementation without data
     return Document::get(key, visitor);
 }
 

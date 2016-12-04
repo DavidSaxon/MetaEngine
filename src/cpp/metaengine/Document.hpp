@@ -266,6 +266,30 @@ protected:
     static fallback_reporter s_get_reporter;
 
     //--------------------------------------------------------------------------
+    //                            PROTECTED ATTRIBUTES
+    //--------------------------------------------------------------------------
+
+    /*!
+     * \brief The root JSON root value that has been loaded and parsed from the
+     *        file system.
+     */
+    std::unique_ptr<Json::Value> m_file_root;
+    /*!
+     * \brief The root JSON root value that has been loaded and parsed from
+     *        memory.
+     */
+    std::unique_ptr<Json::Value> m_mem_root;
+
+    /*!
+     * \brief The path to the file to load JSON data from.
+     */
+    arc::io::sys::Path m_file_path;
+    /*!
+     * \brief Whether the path is being used to load this Document's data.
+     */
+    bool m_using_path;
+
+    //--------------------------------------------------------------------------
     //                         PROTECTED MEMBER FUNCTIONS
     //--------------------------------------------------------------------------
 
@@ -276,6 +300,15 @@ protected:
      * Document implementations.
      */
     virtual VisitorBase* get(
+            const arc::str::UTF8String& key,
+            VisitorBase* visitor);
+
+    /*!
+     * \brief Internal implementation of get that takes a pre-resolved JSON
+     *        value.
+     */
+    VisitorBase* get(
+            const Json::Value* data,
             const arc::str::UTF8String& key,
             VisitorBase* visitor);
 
@@ -309,30 +342,10 @@ private:
     //--------------------------------------------------------------------------
 
     /*!
-     * \brief The path to the file to load JSON data from.
-     */
-    arc::io::sys::Path m_file_path;
-    /*!
-     * \brief Whether the path is being used to load this Document's data.
-     */
-    bool m_using_path;
-
-    /*!
      * \brief The pointer to memory to load JSON data from. (null if not being
      *        used).
      */
     const arc::str::UTF8String* m_memory;
-
-    /*!
-     * \brief The root JSON root value that has been loaded and parsed from the
-     *        file system.
-     */
-    std::unique_ptr<Json::Value> m_file_root;
-    /*!
-     * \brief The root JSON root value that has been loaded and parsed from
-     *        memory.
-     */
-    std::unique_ptr<Json::Value> m_mem_root;
 };
 
 } // namespace metaengine

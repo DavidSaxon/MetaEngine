@@ -196,4 +196,49 @@ void PathV::set_external_document(metaengine::Document* external_document)
     m_external = external_document;
 }
 
+//------------------------------------------------------------------------------
+//                              PATH VECTOR VISITOR
+//------------------------------------------------------------------------------
+
+PathVectorV& PathVectorV::instance()
+{
+    static PathVectorV v;
+    return v;
+}
+
+bool PathVectorV::retrieve(
+        const Json::Value* data,
+        const arc::str::UTF8String& key,
+        Document* requester,
+        arc::str::UTF8String& error_message)
+{
+    // check type
+    if(!data->isArray())
+    {
+        Json::FastWriter j_writer;
+        error_message << "\"" << j_writer.write(*data) << "\" cannot be "
+                      << "converted to array type.";
+        return false;
+    }
+
+    // temp value
+    std::vector<arc::io::sys::Path> temp;
+
+    // iterate over the values
+    Json::Value::const_iterator child;
+    for(child = data->begin(); child != data->end(); ++child)
+    {
+        // attempt to get a path using the PathV visitor
+        if(!PathV::instance().retrieve(&*child, key, requester, error_message))
+        {
+            return false;
+        }
+        temp.push_back(*PathV::instance());
+    }
+
+    // no errors, use the temp value
+    m_value = temp;
+    return true;
+}
+
 } // namespace metaengine
