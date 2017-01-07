@@ -28,21 +28,21 @@
  */
 #define ME_BOOLVECV metaengine::BoolVectorV::instance()
 /*!
- * \brief Shorthand for metaengine::IntV::instance()
+ * \brief Shorthand for metaengine::IntV<IntType>::instance()
  */
-#define ME_INTV metaengine::IntV::instance()
+#define ME_INTV(IntType) metaengine::IntV<IntType>::instance()
 /*!
- * \brief Shorthand for metaengine::IntVectorV::instance()
+ * \brief Shorthand for metaengine::IntVectorV<IntType>::instance()
  */
-#define ME_INTVECV metaengine::IntVectorV::instance()
+#define ME_INTVECV(IntType) metaengine::IntVectorV<IntType>::instance()
 /*!
- * \brief Shorthand for metaengine::FloatV::instance()
+ * \brief Shorthand for metaengine::FloatV<FloatType>::instance()
  */
-#define ME_FLOATV metaengine::FloatV::instance()
+#define ME_FLOATV(FloatType) metaengine::FloatV<FloatType>::instance()
 /*!
- * \brief Shorthand for metaengine::FloatVectorV::instance()
+ * \brief Shorthand for metaengine::FloatVectorV<FloatType>::instance()
  */
-#define ME_FLOATVECV metaengine::FloatVectorV::instance()
+#define ME_FLOATVECV(FloatType) metaengine::FloatVectorV<FloatType>::instance()
 
 /*!
  * \brief Shorthand for metaengine::UTF8StringV::instance()
