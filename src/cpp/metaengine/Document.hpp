@@ -26,6 +26,14 @@ class Value;
 namespace metaengine
 {
 
+class Document;
+
+//------------------------------------------------------------------------------
+//                                TYPE DEFINITIONS
+//------------------------------------------------------------------------------
+
+typedef std::unique_ptr<Document> DocumentPtr;
+
 /*!
  * \brief Object that is used to load and store MetaEngine data from JSON.
  *

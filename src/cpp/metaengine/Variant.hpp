@@ -5,10 +5,24 @@
 #ifndef METAENGINE_VARIANT_HPP_
 #define METAENGINE_VARIANT_HPP_
 
+#include <memory>
+
 #include "metaengine/Document.hpp"
 
 namespace metaengine
 {
+
+//------------------------------------------------------------------------------
+//                              FORWARD DECLARATIONS
+//------------------------------------------------------------------------------
+
+class Variant;
+
+//------------------------------------------------------------------------------
+//                              TYPEDEF DEFINITIONS
+//------------------------------------------------------------------------------
+
+typedef std::unique_ptr<Variant> VariantPtr;
 
 /*!
  * \brief A derived implementation of Document which supports loading meta data
